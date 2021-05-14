@@ -1,0 +1,20 @@
+name: api
+description: A API client library to connect with mscore gateway.
+version: 0.0.1
+author: devit
+homepage:
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.12.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
