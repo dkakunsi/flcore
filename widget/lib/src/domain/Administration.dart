@@ -6,7 +6,7 @@ import 'package:api/api.dart';
 import '../../Configuration.dart';
 import '../Domain.dart';
 
-var api = Api(config);
+var api = Api(getConfig());
 
 class Administration extends Domain {
   Administration() : super('Administration', 'This is administration');

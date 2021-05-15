@@ -9,7 +9,7 @@ import 'package:api/api.dart';
 import '../../Configuration.dart';
 import '../Domain.dart';
 
-var api = Api(config);
+var api = Api(getConfig());
 
 class Advertorial extends Domain {
   Advertorial() : super('Advertorial', 'This is advertorial');
@@ -47,7 +47,7 @@ class Advertorial extends Domain {
 
   Future<Map> _getGridData() async {
     Map<String, String> context = {
-      "token": token['id'],
+      "token": getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
     var criteria = {

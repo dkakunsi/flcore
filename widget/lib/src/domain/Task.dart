@@ -9,7 +9,7 @@ import 'package:api/api.dart';
 import '../../Configuration.dart';
 import '../Domain.dart';
 
-var api = Api(config);
+var api = Api(getConfig());
 
 class Task extends Domain {
   Task() : super('Task', 'This is task');
@@ -34,7 +34,7 @@ class Task extends Domain {
 
   Future<Map> _getGridData() async {
     Map<String, String> context = {
-      "token": token['id'],
+      "token": getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
     var criteria = {

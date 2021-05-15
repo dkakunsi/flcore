@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     this._entityId = null;
-    this._domains = getDomains(token['role']);
+    this._domains = getDomains(getToken()['role']);
     this._selectedDomain = this._domains.values.elementAt(0);
     this._drawerWidgets = getDrawerWidgets(this._domains);
   }
