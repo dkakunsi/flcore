@@ -1,0 +1,30 @@
+name: widget
+description: A widget library.
+version: 0.0.1
+author: devit
+homepage:
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  http: ^0.12.1
+
+  uuid: ^3.0.4
+
+  api:
+    git:
+      url: git@bitbucket.org:devit/dart-library.git
+      path: api
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
