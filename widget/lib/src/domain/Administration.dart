@@ -1,12 +1,8 @@
 library widget;
 
 import 'package:flutter/material.dart';
-import 'package:api/api.dart';
 
-import '../../Configuration.dart';
 import '../Domain.dart';
-
-var api = Api(getConfig());
 
 class Administration extends Domain {
   Administration() : super('Administration', 'This is administration');

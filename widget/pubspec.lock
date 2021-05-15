@@ -5,8 +5,8 @@ packages:
     dependency: "direct main"
     description:
       path: api
-      ref: HEAD
-      resolved-ref: "0677abeea9de7594bc1068d75f457cd4e39bd854"
+      ref: master
+      resolved-ref: "1108894bb0871cac86eec27a8ef3c1b3f76d9121"
       url: "git@bitbucket.org:devit/dart-library.git"
     source: git
     version: "0.0.1"

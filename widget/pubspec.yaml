@@ -21,6 +21,7 @@ dependencies:
   api:
     git:
       url: git@bitbucket.org:devit/dart-library.git
+      ref: master
       path: api
 
 dev_dependencies:
