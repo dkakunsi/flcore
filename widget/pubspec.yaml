@@ -19,10 +19,11 @@ dependencies:
   uuid: ^3.0.4
 
   api:
-    git:
-      url: git@bitbucket.org:devit/dart-library.git
-      ref: master
-      path: api
+    path: ../api
+    # git:
+    #   url: git@bitbucket.org:devit/dart-library.git
+    #   ref: master
+    #   path: api
 
 dev_dependencies:
   flutter_test:

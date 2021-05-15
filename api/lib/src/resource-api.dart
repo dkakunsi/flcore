@@ -5,12 +5,13 @@ import './base-api.dart';
 import 'dart:convert';
 
 class ResourceApi extends BaseApi {
-
-  ResourceApi(Map<String, String> configuration) : super(configuration, 'api') {
+  ResourceApi(Map<String, dynamic> configuration)
+      : super(configuration, 'api') {
     this.client = http.Client();
   }
 
-  Future<Map> post(Map<String, String> context, String domain, Map jsonData) async {
+  Future<Map> post(
+      Map<String, String> context, String domain, Map jsonData) async {
     var query = {'domain': domain};
     var uri = Uri(
         host: getHost(),
@@ -30,7 +31,8 @@ class ResourceApi extends BaseApi {
     return {'type': 'SUCCESS', 'message': response.body};
   }
 
-  Future<Map> put(Map<String, String> context, String domain, String id, Map jsonData) async {
+  Future<Map> put(Map<String, String> context, String domain, String id,
+      Map jsonData) async {
     var query = {'domain': domain};
     var uri = Uri(
         host: getHost(),
@@ -69,7 +71,8 @@ class ResourceApi extends BaseApi {
     return {'type': 'SUCCESS', 'message': response.body};
   }
 
-  Future<Map> getByCode(Map<String, String> context, String domain, String code) async {
+  Future<Map> getByCode(
+      Map<String, String> context, String domain, String code) async {
     var query = {'domain': domain};
     var uri = Uri(
         host: getHost(),

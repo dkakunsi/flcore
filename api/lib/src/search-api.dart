@@ -5,12 +5,13 @@ import './base-api.dart';
 import 'dart:convert';
 
 class SearchApi extends BaseApi {
-
-  SearchApi(Map<String, String> configuration) : super(configuration, 'search') {
+  SearchApi(Map<String, dynamic> configuration)
+      : super(configuration, 'search') {
     this.client = http.Client();
   }
 
-  Future<Map> search(Map<String, String> context, String domain, Map criteria) async {
+  Future<Map> search(
+      Map<String, String> context, String domain, Map criteria) async {
     var query = {'domain': domain};
     var uri = Uri(
         host: getHost(),

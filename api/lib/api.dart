@@ -7,8 +7,7 @@ import './src/search-api.dart';
 import './src/workflow-api.dart';
 
 class Api {
-
-  Map<String, String> _configuration;
+  Map<String, dynamic> _configuration;
 
   ResourceApi _resourceApi;
 
@@ -28,31 +27,37 @@ class Api {
     this._workflowApi = WorkflowApi(this._configuration);
   }
 
-  Future<Map> postResource(Map<String, String> context, String domain, Map jsonData) async {
+  Future<Map> postResource(
+      Map<String, String> context, String domain, Map jsonData) async {
     return await _resourceApi.post(context, domain, jsonData);
   }
 
-  Future<Map> putResource(Map<String, String> context, String domain, String id,Map jsonData) async {
+  Future<Map> putResource(Map<String, String> context, String domain, String id,
+      Map jsonData) async {
     return await _resourceApi.put(context, domain, id, jsonData);
   }
 
-  Future<Map> getResource(Map<String, String> context, String domain, String id) async {
+  Future<Map> getResource(
+      Map<String, String> context, String domain, String id) async {
     return await _resourceApi.get(context, domain, id);
   }
 
-  Future<Map> getResourceByCode(Map<String, String> context, String domain, String code) async {
+  Future<Map> getResourceByCode(
+      Map<String, String> context, String domain, String code) async {
     return _resourceApi.getByCode(context, domain, code);
   }
 
-  Future<Map> login(Map<String, String> context, String username, String password) async {
-    return this._loginApi.login(context, username, password);
+  Future<Map> login(
+      String breadcrumbId, String username, String password) async {
+    return this._loginApi.login(breadcrumbId, username, password);
   }
 
   Future<Map> getSchema(Map<String, String> context, String domain) async {
     return this._schemaApi.get(context, domain);
   }
 
-  Future<Map> search(Map<String, String> context, String domain, Map criteria) async {
+  Future<Map> search(
+      Map<String, String> context, String domain, Map criteria) async {
     return this._searchApi.search(context, domain, criteria);
   }
 
@@ -64,7 +69,8 @@ class Api {
     return this._workflowApi.approveTask(context, taskId);
   }
 
-  Future<Map> rejectTask(Map<String, String> context, String taskId, String reason) async {
+  Future<Map> rejectTask(
+      Map<String, String> context, String taskId, String reason) async {
     return this._workflowApi.rejectTask(context, taskId, reason);
   }
 }

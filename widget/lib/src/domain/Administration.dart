@@ -8,7 +8,7 @@ class Administration extends Domain {
   Administration() : super('Administration', 'This is administration');
 
   @override
-  Future<Widget> getGridView(Function onTap) async {
+  Future<Widget> getDataView(Function onTap) async {
     return GridView.builder(
       itemCount: 1,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

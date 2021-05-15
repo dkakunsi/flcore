@@ -4,11 +4,9 @@ packages:
   api:
     dependency: "direct main"
     description:
-      path: api
-      ref: master
-      resolved-ref: "1108894bb0871cac86eec27a8ef3c1b3f76d9121"
-      url: "git@bitbucket.org:devit/dart-library.git"
-    source: git
+      path: "../api"
+      relative: true
+    source: path
     version: "0.0.1"
   async:
     dependency: transitive

@@ -1,21 +1,20 @@
 library api;
 
-import 'package:http/http.dart' as http;
-import './base-api.dart';
 import 'dart:convert';
 
-class LoginApi extends BaseApi {
+import 'package:http/http.dart' as http;
+import './base-api.dart';
 
-  LoginApi(Map<String, String> configuration) : super(configuration, 'auth') {
+class LoginApi extends BaseApi {
+  LoginApi(Map<String, dynamic> configuration) : super(configuration, 'auth') {
     this.client = http.Client();
   }
 
-  Future<Map> login(Map<String, String> context, String username, String password) async {
+  Future<Map> login(
+      String breadcrumbId, String username, String password) async {
     var uri = Uri(host: getHost(), port: getPort(), path: this.path);
 
-    Map<String, String> headers = {
-      'breadcrumbId': context['breadcrumbId']
-    };
+    Map<String, String> headers = {'breadcrumbId': breadcrumbId};
 
     var jsonData = {
       'domain': 'credential',

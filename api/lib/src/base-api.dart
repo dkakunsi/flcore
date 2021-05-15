@@ -3,10 +3,9 @@ library api;
 import 'package:http/http.dart' as http;
 
 abstract class BaseApi {
-
   http.Client client;
 
-  final Map<String, String> configuration;
+  final Map<String, dynamic> configuration;
 
   String path;
 

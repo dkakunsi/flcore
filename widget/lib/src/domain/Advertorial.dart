@@ -16,7 +16,7 @@ class Advertorial extends Domain {
   Advertorial() : super('Advertorial', 'This is advertorial');
 
   @override
-  Future<GridView> getGridView(Function onTap) async {
+  Future<GridView> getDataView(Function onTap) async {
     var result = await _getGridData();
     var data = jsonDecode(result['message']);
 

@@ -30,7 +30,7 @@ abstract class Domain {
         });
   }
 
-  Future<Widget> getGridView(Function onTap);
+  Future<Widget> getDataView(Function onTap);
 
   FloatingActionButton getGridActionButton(Function onPressed) {
     return null;
@@ -43,7 +43,7 @@ abstract class Domain {
   }
 }
 
-Map<String, Domain> getDomains(List<String> roles) {
+Map<String, Domain> getDomains(List roles) {
   if (roles == null || roles.isEmpty) {
     return {'Login': Login()};
   }

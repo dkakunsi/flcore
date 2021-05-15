@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'base-api.dart';
 
 class SchemaApi extends BaseApi {
-
-  SchemaApi(Map<String, String> configuration) : super(configuration, 'schema') {
+  SchemaApi(Map<String, dynamic> configuration)
+      : super(configuration, 'schema') {
     this.client = http.Client();
   }
 

@@ -1,11 +1,12 @@
 library widget;
 
+import 'dart:convert';
+import 'dart:html' show window;
+
 class Configuration {
   static final Configuration _singleton = Configuration._internal();
 
-  Map<String, String> _config = {};
-
-  Map _token = {};
+  Map<String, dynamic> _config = {};
 
   factory Configuration() {
     return _singleton;
@@ -13,15 +14,21 @@ class Configuration {
 
   Configuration._internal();
 
-  Map<String, String> getConfig() => _config;
+  Map<String, dynamic> getConfig() => _config;
 
-  void setConfig(Map<String, String> config) {
+  void setConfig(Map<String, dynamic> config) {
     _config = config;
   }
 
-  Map getToken() => _token;
+  Map getToken() {
+    var token = window.localStorage['token'];
+    if (token == null) {
+      return {};
+    }
+    return jsonDecode(token);
+  }
 
   void setToken(Map token) {
-    _token = token;
+    window.localStorage['token'] = jsonEncode(token);
   }
 }

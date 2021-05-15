@@ -16,7 +16,7 @@ class Task extends Domain {
   Task() : super('Task', 'This is task');
 
   @override
-  Future<GridView> getGridView(Function onTap) async {
+  Future<GridView> getDataView(Function onTap) async {
     var result = await _getGridData();
     var data = jsonDecode(result['message']);
 

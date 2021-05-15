@@ -1,5 +1,7 @@
 library widget;
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'src/Domain.dart';
@@ -27,21 +29,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String _entityId;
 
+  Function _viewAction;
+
   @override
   void initState() {
     super.initState();
-
     this._entityId = null;
     this._domains = getDomains(config.getToken()['role']);
     this._selectedDomain = this._domains.values.elementAt(0);
     this._drawerWidgets = getDrawerWidgets(this._domains);
+
+    this._viewAction = this._selectedDomain.name == 'Login'
+        ? this._setLogin
+        : this._openInputView;
   }
 
   List<Widget> getDrawerWidgets(Map<String, Domain> domains) {
     List<Widget> widgets = [
       DrawerHeader(
           decoration: BoxDecoration(color: Colors.white),
-          child: Image(image: AssetImage('logo_sangihekab.png'))),
+          child: Image(image: AssetImage('logo.png'))),
     ];
 
     domains.forEach((key, domain) {
@@ -73,17 +80,38 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _setLogin() {
+    setState(() {
+      this._domains = getDomains(config.getToken()['role']);
+      this._selectedDomain = this._domains.values.elementAt(0);
+      this._drawerWidgets = getDrawerWidgets(this._domains);
+
+      this._viewAction = this._selectedDomain.name == 'Login'
+          ? this._setLogin
+          : this._openInputView;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(this._selectedDomain.name),
+        title: Text(
+          this._selectedDomain.name,
+          maxLines: 1,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: Container(
-        padding: EdgeInsets.all(12.0),
         child: FutureBuilder(
             future: this._action == 'gridView'
-                ? this._selectedDomain.getGridView(_openInputView)
+                ? this._selectedDomain.getDataView(this._viewAction)
                 : this._selectedDomain.getInputView(this._entityId),
             builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
               return snapshot.hasData
@@ -92,8 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
             }),
       ),
       drawer: Drawer(
-        child:
-            ListView(padding: EdgeInsets.zero, children: this._drawerWidgets),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: this._drawerWidgets,
+        ),
       ),
       floatingActionButton: this._action == 'gridView'
           ? this._selectedDomain.getGridActionButton(_openInputView)

@@ -5,16 +5,13 @@ import 'base-api.dart';
 import 'dart:convert';
 
 class WorkflowApi extends BaseApi {
-
-  WorkflowApi(Map<String, String> configuration) : super(configuration, 'workflow') {
+  WorkflowApi(Map<String, dynamic> configuration)
+      : super(configuration, 'workflow') {
     this.client = http.Client();
   }
 
   Future<Map> createInstance(Map<String, String> context, Map jsonData) async {
-    var uri = Uri(
-        host: getHost(),
-        port: getPort(),
-        path: this.path);
+    var uri = Uri(host: getHost(), port: getPort(), path: this.path);
 
     Map<String, String> headers = {
       'Authorization': context['token'],
@@ -29,10 +26,8 @@ class WorkflowApi extends BaseApi {
   }
 
   Future<Map> approveTask(Map<String, String> context, String taskId) async {
-    var uri = Uri(
-        host: getHost(),
-        port: getPort(),
-        path: this.path + "/" + taskId);
+    var uri =
+        Uri(host: getHost(), port: getPort(), path: this.path + "/" + taskId);
 
     Map<String, String> headers = {
       'Authorization': context['token'],
@@ -41,9 +36,7 @@ class WorkflowApi extends BaseApi {
 
     var jsonData = {
       'domain': 'workflowtask',
-      'variable': {
-        'approved': 'true'
-      }
+      'variable': {'approved': 'true'}
     };
 
     var response = await this
@@ -53,11 +46,10 @@ class WorkflowApi extends BaseApi {
     return {'type': 'SUCCESS', 'message': response.body};
   }
 
-  Future<Map> rejectTask(Map<String, String> context, String taskId, String reason) async {
-    var uri = Uri(
-        host: getHost(),
-        port: getPort(),
-        path: this.path + "/" + taskId);
+  Future<Map> rejectTask(
+      Map<String, String> context, String taskId, String reason) async {
+    var uri =
+        Uri(host: getHost(), port: getPort(), path: this.path + "/" + taskId);
 
     Map<String, String> headers = {
       'Authorization': context['token'],
@@ -66,10 +58,7 @@ class WorkflowApi extends BaseApi {
 
     var jsonData = {
       'domain': 'workflowtask',
-      'variable': {
-        'approved': 'false',
-        'closeReason': reason
-      }
+      'variable': {'approved': 'false', 'closeReason': reason}
     };
 
     var response = await this
