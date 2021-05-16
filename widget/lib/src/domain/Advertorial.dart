@@ -16,7 +16,7 @@ var config = Configuration();
 var api = Api(config.getConfig());
 
 class Advertorial extends Domain {
-  AdvertorialInputView _advertorialInputView;
+  _AdvertorialInputView _advertorialInputView;
 
   Advertorial() : super('Advertorial', 'This is advertorial');
 
@@ -27,11 +27,14 @@ class Advertorial extends Domain {
 
   @override
   Future<Widget> getInputView(String entityId) async =>
-      this._advertorialInputView = AdvertorialInputView(entityId);
+      this._advertorialInputView = _AdvertorialInputView(entityId);
 
   @override
   FloatingActionButton getGridActionButton(Function onPressed) {
     return FloatingActionButton(
+      backgroundColor: config.getConfig()['primaryColor'],
+      hoverColor: config.getConfig()['focusColor'],
+      elevation: 10,
       onPressed: () {
         onPressed(null);
       },
@@ -42,7 +45,14 @@ class Advertorial extends Domain {
 
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
+    if (this._advertorialInputView._id != null && !config.isAdmin()) {
+      return null;
+    }
+
     return FloatingActionButton(
+      backgroundColor: config.getConfig()['primaryColor'],
+      hoverColor: config.getConfig()['focusColor'],
+      elevation: 10,
       onPressed: () {
         this._advertorialInputView.save().then((value) {
           print(jsonEncode(value));
@@ -194,7 +204,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
   }
 }
 
-class AdvertorialInputView extends StatefulWidget {
+class _AdvertorialInputView extends StatefulWidget {
   final String _id;
 
   final Map<String, String> _attributes = {
@@ -209,14 +219,14 @@ class AdvertorialInputView extends StatefulWidget {
 
   final Map _data = {'advert': {}};
 
-  AdvertorialInputView(this._id) {
+  _AdvertorialInputView(this._id) {
     this._attributes.forEach((key, name) {
       this._inputFields.add(InputField(key, name));
     });
   }
 
   @override
-  State<StatefulWidget> createState() => AdvertorialInputViewState();
+  State<StatefulWidget> createState() => _AdvertorialInputViewState();
 
   Future<Map> _getDetailData() async {
     if (this._id == null) {
@@ -272,7 +282,7 @@ class AdvertorialInputView extends StatefulWidget {
   }
 }
 
-class AdvertorialInputViewState extends State<AdvertorialInputView> {
+class _AdvertorialInputViewState extends State<_AdvertorialInputView> {
   Future<Map> _advertorial;
 
   @override

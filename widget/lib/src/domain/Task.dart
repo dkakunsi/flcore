@@ -15,22 +15,29 @@ var config = Configuration();
 var api = Api(config.getConfig());
 
 class Task extends Domain {
-  TaskInputView _taskInputView;
+  _TaskInputView _taskInputView;
 
   Task() : super('Task', 'This is task');
 
   @override
   Future<Widget> getDataView(Function onAction) async {
-    return TaskGridView(onAction);
+    return _TaskGridView(onAction);
   }
 
   @override
   Future<Widget> getInputView(String entityId) async =>
-      this._taskInputView = TaskInputView(entityId);
+      this._taskInputView = _TaskInputView(entityId);
 
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
+    if (!config.hasRole('user')) {
+      return null;
+    }
+
     return FloatingActionButton(
+      backgroundColor: config.getConfig()['primaryColor'],
+      hoverColor: config.getConfig()['focusColor'],
+      elevation: 10,
       onPressed: () {
         this._taskInputView.save().then((value) {
           print(jsonEncode(value));
@@ -46,13 +53,13 @@ class Task extends Domain {
   }
 }
 
-class TaskGridView extends StatefulWidget {
+class _TaskGridView extends StatefulWidget {
   final Function _onAction;
 
-  TaskGridView(this._onAction);
+  _TaskGridView(this._onAction);
 
   @override
-  State<StatefulWidget> createState() => TaskGridViewState();
+  State<StatefulWidget> createState() => _TaskGridViewState();
 
   Future<Map> _getGridData() async {
     Map<String, String> context = {
@@ -80,7 +87,7 @@ class TaskGridView extends StatefulWidget {
   }
 }
 
-class TaskGridViewState extends State<TaskGridView> {
+class _TaskGridViewState extends State<_TaskGridView> {
   Future<Map> _tasks;
 
   @override
@@ -179,7 +186,7 @@ class TaskGridViewState extends State<TaskGridView> {
   }
 }
 
-class TaskInputView extends StatefulWidget {
+class _TaskInputView extends StatefulWidget {
   final String _id;
 
   final Map<String, String> _attributes = {
@@ -192,14 +199,14 @@ class TaskInputView extends StatefulWidget {
 
   final Map _data = {'task': {}};
 
-  TaskInputView(this._id) {
+  _TaskInputView(this._id) {
     this._attributes.forEach((key, name) {
       this._inputFields.add(InputField(key, name));
     });
   }
 
   @override
-  State<StatefulWidget> createState() => TaskInputViewState();
+  State<StatefulWidget> createState() => _TaskInputViewState();
 
   Future<Map> _getDetailData() async {
     if (this._id == null) {
@@ -239,12 +246,12 @@ class TaskInputView extends StatefulWidget {
 
     if (payload['approved'] == 'true') {
       return Future.delayed(
-        Duration(seconds: 1),
+        Duration(seconds: 2),
         () => api.approveTask(context, this._id),
       );
     } else if (payload['approved'] == 'false') {
       return Future.delayed(
-        Duration(seconds: 1),
+        Duration(seconds: 2),
         () => api.rejectTask(context, this._id, payload['closedReason']),
       );
     } else {
@@ -253,7 +260,7 @@ class TaskInputView extends StatefulWidget {
   }
 }
 
-class TaskInputViewState extends State<TaskInputView> {
+class _TaskInputViewState extends State<_TaskInputView> {
   Future<Map> _task;
 
   @override

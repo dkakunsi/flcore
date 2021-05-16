@@ -127,9 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: this._action == 'gridView'
           ? this._selectedDomain.getGridActionButton(_openInputView)
-          : config.isAdmin()
-              ? this._selectedDomain.getInputActionButton(_openGridView)
-              : null,
+          : this._selectedDomain.getInputActionButton(_openGridView),
     );
   }
 }

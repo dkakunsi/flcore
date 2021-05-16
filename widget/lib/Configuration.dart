@@ -33,7 +33,11 @@ class Configuration {
   }
 
   bool isAdmin() {
+    return this.hasRole('admin');
+  }
+
+  bool hasRole(String role) {
     List roles = getToken()['role'];
-    return roles.contains('admin');
+    return roles.contains(role);
   }
 }

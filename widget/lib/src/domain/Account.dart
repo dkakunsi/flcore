@@ -18,12 +18,15 @@ class Account extends Domain {
 
   @override
   Future<Widget> getDataView(Function onAction) async {
-    return AccountGridView(onAction);
+    return _AccountGridView(onAction);
   }
 
   @override
   FloatingActionButton getGridActionButton(Function onPressed) {
     return FloatingActionButton(
+      backgroundColor: config.getConfig()['primaryColor'],
+      hoverColor: config.getConfig()['focusColor'],
+      elevation: 10,
       onPressed: () {
         onPressed(null);
       },
@@ -42,6 +45,9 @@ class Account extends Domain {
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
     return FloatingActionButton(
+      backgroundColor: config.getConfig()['primaryColor'],
+      hoverColor: config.getConfig()['focusColor'],
+      elevation: 10,
       onPressed: onPressed,
       tooltip: 'Save',
       child: Icon(Icons.save),
@@ -49,13 +55,13 @@ class Account extends Domain {
   }
 }
 
-class AccountGridView extends StatefulWidget {
+class _AccountGridView extends StatefulWidget {
   final Function _onAction;
 
-  AccountGridView(this._onAction);
+  _AccountGridView(this._onAction);
 
   @override
-  State<StatefulWidget> createState() => AccountGridViewState();
+  State<StatefulWidget> createState() => _AccountGridViewState();
 
   Future<Map> _getGridData() async {
     Map<String, String> context = {
@@ -72,7 +78,7 @@ class AccountGridView extends StatefulWidget {
   }
 }
 
-class AccountGridViewState extends State<AccountGridView> {
+class _AccountGridViewState extends State<_AccountGridView> {
   Future<Map> _tasks;
 
   @override
