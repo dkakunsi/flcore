@@ -62,7 +62,12 @@ class AccountGridView extends StatefulWidget {
       "token": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
-    var criteria = {"domain": "index", "criteria": []};
+    var criteria = {
+      "domain": "index",
+      "page": 0,
+      "size": 50,
+      "criteria": [],
+    };
     return await api.search(context, 'account', criteria);
   }
 }

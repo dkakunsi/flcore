@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
 
-import '../../Configuration.dart';
 import '../Domain.dart';
 import '../Util.dart';
+import '../component/InputField.dart';
+import '../../Configuration.dart';
 
 var config = Configuration();
 var api = Api(config.getConfig());
 
 class Task extends Domain {
+  TaskInputView _taskInputView;
+
   Task() : super('Task', 'This is task');
 
   @override
@@ -22,16 +25,21 @@ class Task extends Domain {
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async {
-    return Column(children: [
-      Text('Task input view: ' + entityId),
-    ]);
-  }
+  Future<Widget> getInputView(String entityId) async =>
+      this._taskInputView = TaskInputView(entityId);
 
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
     return FloatingActionButton(
-      onPressed: onPressed,
+      onPressed: () {
+        this._taskInputView.save().then((value) {
+          print(jsonEncode(value));
+        }).onError((error, stackTrace) {
+          print(error);
+        }).whenComplete(() {
+          onPressed();
+        });
+      },
       tooltip: 'Save',
       child: Icon(Icons.save),
     );
@@ -53,6 +61,8 @@ class TaskGridView extends StatefulWidget {
     };
     var criteria = {
       "domain": "index",
+      "page": 0,
+      "size": 10,
       "criteria": [
         {
           "attribute": "organisation",
@@ -165,6 +175,128 @@ class TaskGridViewState extends State<TaskGridView> {
           ),
         );
       },
+    );
+  }
+}
+
+class TaskInputView extends StatefulWidget {
+  final String _id;
+
+  final Map<String, String> _attributes = {
+    'name': 'name',
+    'approved': 'approval',
+    'closedReason': 'reason',
+  };
+
+  final List<InputField> _inputFields = [];
+
+  final Map _data = {'task': {}};
+
+  TaskInputView(this._id) {
+    this._attributes.forEach((key, name) {
+      this._inputFields.add(InputField(key, name));
+    });
+  }
+
+  @override
+  State<StatefulWidget> createState() => TaskInputViewState();
+
+  Future<Map> _getDetailData() async {
+    if (this._id == null) {
+      return {};
+    }
+
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
+    var criteria = {
+      "domain": "index",
+      "page": 0,
+      "size": 1,
+      "criteria": [
+        {
+          "attribute": "id",
+          "value": this._id,
+          "operator": "equals",
+        }
+      ]
+    };
+    return await api.search(context, 'workflowtask', criteria);
+  }
+
+  Future<Map> save() async {
+    Map payload = this._data['task'];
+    this._inputFields.forEach((inputField) {
+      var value = inputField.controller.text;
+      setJSONValue(payload, inputField.elementId, value);
+    });
+
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
+
+    if (payload['approved'] == 'true') {
+      return Future.delayed(
+        Duration(seconds: 1),
+        () => api.approveTask(context, this._id),
+      );
+    } else if (payload['approved'] == 'false') {
+      return Future.delayed(
+        Duration(seconds: 1),
+        () => api.rejectTask(context, this._id, payload['closedReason']),
+      );
+    } else {
+      throw ('Approval response is not recognized: ' + payload['approved']);
+    }
+  }
+}
+
+class TaskInputViewState extends State<TaskInputView> {
+  Future<Map> _task;
+
+  @override
+  void initState() {
+    super.initState();
+    this._task = widget._getDetailData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FutureBuilder(
+          future: _createInputView(),
+          builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+            return snapshot.hasData
+                ? snapshot.data
+                : Container(
+                    width: 0,
+                    height: 0,
+                  );
+          }),
+    );
+  }
+
+  Future<Widget> _createInputView() async {
+    var result = await this._task;
+    if (result.isNotEmpty) {
+      widget._data['task'] = jsonDecode(result['message'])[0];
+
+      widget._inputFields.forEach((inputField) {
+        var value = getJSONValue(widget._data['task'], inputField.elementId);
+        inputField.controller.text = value;
+      });
+    }
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: EdgeInsets.only(top: 20),
+        child: Column(
+          children: widget._inputFields,
+        ),
+      ),
     );
   }
 }

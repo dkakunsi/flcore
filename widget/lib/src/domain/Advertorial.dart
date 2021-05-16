@@ -1,19 +1,23 @@
 library widget;
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
 
-import '../../Configuration.dart';
 import '../Domain.dart';
 import '../Util.dart';
+import '../component/InputField.dart';
+import '../../Configuration.dart';
 
 var config = Configuration();
 var api = Api(config.getConfig());
 
 class Advertorial extends Domain {
+  AdvertorialInputView _advertorialInputView;
+
   Advertorial() : super('Advertorial', 'This is advertorial');
 
   @override
@@ -22,12 +26,8 @@ class Advertorial extends Domain {
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async {
-    var text = entityId == null ? "null" : entityId;
-    return Center(
-      child: Text('Advertorial input view: ' + text),
-    );
-  }
+  Future<Widget> getInputView(String entityId) async =>
+      this._advertorialInputView = AdvertorialInputView(entityId);
 
   @override
   FloatingActionButton getGridActionButton(Function onPressed) {
@@ -43,7 +43,15 @@ class Advertorial extends Domain {
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
     return FloatingActionButton(
-      onPressed: onPressed,
+      onPressed: () {
+        this._advertorialInputView.save().then((value) {
+          print(jsonEncode(value));
+        }).onError((error, stackTrace) {
+          print(error);
+        }).whenComplete(() {
+          onPressed();
+        });
+      },
       tooltip: 'Save',
       child: Icon(Icons.save),
     );
@@ -65,13 +73,9 @@ class AdvertorialGridView extends StatefulWidget {
     };
     var criteria = {
       "domain": "index",
-      "criteria": [
-        {
-          "attribute": "status",
-          "value": "Pengajuan telah selesai",
-          "operator": "equals"
-        }
-      ]
+      "page": 0,
+      "size": 50,
+      "criteria": [],
     };
     return await api.search(context, 'advertorial', criteria);
   }
@@ -105,11 +109,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
   Future<Widget> _createGridView() async {
     var result = await _advertorials;
     var data = jsonDecode(result['message']);
-
-    var crossAxisCount = 2;
-    if (isWebScreen(context)) {
-      crossAxisCount = 4;
-    }
+    var crossAxisCount = gridCount(context);
 
     return GridView.builder(
       padding: EdgeInsets.all(10.0),
@@ -162,6 +162,24 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 18, top: 10),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "By: " + (data[index]['lastUpdatedBy'] ?? ''),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 18, top: 10),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "At: " + (data[index]['lastUpdatedDate'] ?? ''),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -172,6 +190,132 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
           ),
         );
       },
+    );
+  }
+}
+
+class AdvertorialInputView extends StatefulWidget {
+  final String _id;
+
+  final Map<String, String> _attributes = {
+    'code': 'code',
+    'name': 'advert title',
+    'url': 'advert url',
+    'provider_name': 'provider name',
+    'provider_email': 'provider email'
+  };
+
+  final List<InputField> _inputFields = [];
+
+  final Map _data = {'advert': {}};
+
+  AdvertorialInputView(this._id) {
+    this._attributes.forEach((key, name) {
+      this._inputFields.add(InputField(key, name));
+    });
+  }
+
+  @override
+  State<StatefulWidget> createState() => AdvertorialInputViewState();
+
+  Future<Map> _getDetailData() async {
+    if (this._id == null) {
+      return {};
+    }
+
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
+    return await api.getResource(context, 'advertorial', this._id);
+  }
+
+  Future<Map> save() async {
+    Map payload = this._data['advert'];
+    this._inputFields.forEach((inputField) {
+      var value = inputField.controller.text;
+      setJSONValue(payload, inputField.elementId, value);
+    });
+
+    setJSONValue(payload, 'domain', 'advertorial');
+
+    payload.remove('createdDate');
+    payload.remove('lastUpdatedDate');
+
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
+
+    if (payload['id'] == null) {
+      // create using workflow
+
+      payload['status'] = 'Pengajuan telah terdaftar';
+
+      var jsonData = {
+        'domain': 'workflow',
+        'action': 'advertorial.submit',
+        'entity': payload,
+        'variable': {'organisation': 'PDE'}
+      };
+      return Future.delayed(
+        Duration(seconds: 2),
+        () => api.createInstance(context, jsonData),
+      );
+    } else {
+      // update using resource
+      return Future.delayed(
+        Duration(seconds: 2),
+        () => api.putResource(context, 'advertorial', payload['id'], payload),
+      );
+    }
+  }
+}
+
+class AdvertorialInputViewState extends State<AdvertorialInputView> {
+  Future<Map> _advertorial;
+
+  @override
+  void initState() {
+    super.initState();
+    this._advertorial = widget._getDetailData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FutureBuilder(
+          future: _createInputView(),
+          builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+            return snapshot.hasData
+                ? snapshot.data
+                : Container(
+                    width: 0,
+                    height: 0,
+                  );
+          }),
+    );
+  }
+
+  Future<Widget> _createInputView() async {
+    var result = await this._advertorial;
+    if (result.isNotEmpty) {
+      widget._data['advert'] = jsonDecode(result['message']);
+
+      widget._inputFields.forEach((inputField) {
+        var value = getJSONValue(widget._data['advert'], inputField.elementId);
+        inputField.controller.text = value;
+      });
+    }
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: EdgeInsets.only(top: 20),
+        child: Column(
+          children: widget._inputFields,
+        ),
+      ),
     );
   }
 }

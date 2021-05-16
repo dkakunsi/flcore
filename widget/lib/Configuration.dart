@@ -31,4 +31,9 @@ class Configuration {
   void setToken(Map token) {
     window.localStorage['token'] = jsonEncode(token);
   }
+
+  bool isAdmin() {
+    List roles = getToken()['role'];
+    return roles.contains('admin');
+  }
 }
