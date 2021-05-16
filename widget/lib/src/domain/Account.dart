@@ -13,20 +13,19 @@ import '../Util.dart';
 var config = Configuration();
 var api = Api(config.getConfig());
 
-class Advertorial extends Domain {
-  Advertorial() : super('Advertorial', 'This is advertorial');
+class Account extends Domain {
+  Account() : super('Account', 'This is account');
 
   @override
   Future<Widget> getDataView(Function onAction) async {
-    return AdvertorialGridView(onAction);
+    return AccountGridView(onAction);
   }
 
   @override
   Future<Widget> getInputView(String entityId) async {
-    var text = entityId == null ? "null" : entityId;
-    return Center(
-      child: Text('Advertorial input view: ' + text),
-    );
+    return Column(children: [
+      Text('Admin input view'),
+    ]);
   }
 
   @override
@@ -35,55 +34,37 @@ class Advertorial extends Domain {
       onPressed: () {
         onPressed(null);
       },
-      tooltip: 'Add Advertorial',
+      tooltip: 'Add Account',
       child: Icon(Icons.add),
-    );
-  }
-
-  @override
-  FloatingActionButton getInputActionButton(Function onPressed) {
-    return FloatingActionButton(
-      onPressed: onPressed,
-      tooltip: 'Save',
-      child: Icon(Icons.save),
     );
   }
 }
 
-class AdvertorialGridView extends StatefulWidget {
+class AccountGridView extends StatefulWidget {
   final Function _onAction;
 
-  AdvertorialGridView(this._onAction);
+  AccountGridView(this._onAction);
 
   @override
-  State<StatefulWidget> createState() => AdvertorialGridViewState();
+  State<StatefulWidget> createState() => AccountGridViewState();
 
   Future<Map> _getGridData() async {
     Map<String, String> context = {
       "token": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
-    var criteria = {
-      "domain": "index",
-      "criteria": [
-        {
-          "attribute": "status",
-          "value": "Pengajuan telah selesai",
-          "operator": "equals"
-        }
-      ]
-    };
-    return await api.search(context, 'advertorial', criteria);
+    var criteria = {"domain": "index", "criteria": []};
+    return await api.search(context, 'account', criteria);
   }
 }
 
-class AdvertorialGridViewState extends State<AdvertorialGridView> {
-  Future<Map> _advertorials;
+class AccountGridViewState extends State<AccountGridView> {
+  Future<Map> _tasks;
 
   @override
   void initState() {
     super.initState();
-    this._advertorials = widget._getGridData();
+    this._tasks = widget._getGridData();
   }
 
   @override
@@ -103,7 +84,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
   }
 
   Future<Widget> _createGridView() async {
-    var result = await _advertorials;
+    var result = await _tasks;
     var data = jsonDecode(result['message']);
 
     var crossAxisCount = 2;
@@ -149,7 +130,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "Code: " + data[index]['code'],
+                          "Username: " + data[index]['code'],
                         ),
                       ),
                     ),
@@ -158,7 +139,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "Status: " + data[index]['status'],
+                          "Organisation: " + data[index]['organisation'],
                         ),
                       ),
                     ),

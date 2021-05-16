@@ -2,7 +2,7 @@ library widget;
 
 import 'package:flutter/material.dart';
 
-import 'domain/Administration.dart';
+import 'domain/Account.dart';
 import 'domain/Advertorial.dart';
 import 'domain/Login.dart';
 import 'domain/Task.dart';
@@ -53,7 +53,7 @@ Map<String, Domain> getDomains(List roles) {
     'Task': Task(),
   };
   if (roles.contains('admin')) {
-    domains.putIfAbsent('Administration', () => Administration());
+    domains.putIfAbsent('Account', () => Account());
   }
   return domains;
 }
