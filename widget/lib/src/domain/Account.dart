@@ -22,13 +22,6 @@ class Account extends Domain {
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async {
-    return Column(children: [
-      Text('Admin input view'),
-    ]);
-  }
-
-  @override
   FloatingActionButton getGridActionButton(Function onPressed) {
     return FloatingActionButton(
       onPressed: () {
@@ -36,6 +29,22 @@ class Account extends Domain {
       },
       tooltip: 'Add Account',
       child: Icon(Icons.add),
+    );
+  }
+
+  @override
+  Future<Widget> getInputView(String entityId) async {
+    return Column(children: [
+      Text('Admin input view'),
+    ]);
+  }
+
+  @override
+  FloatingActionButton getInputActionButton(Function onPressed) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      tooltip: 'Save',
+      child: Icon(Icons.save),
     );
   }
 }

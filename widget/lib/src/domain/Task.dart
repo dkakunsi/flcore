@@ -27,6 +27,15 @@ class Task extends Domain {
       Text('Task input view: ' + entityId),
     ]);
   }
+
+  @override
+  FloatingActionButton getInputActionButton(Function onPressed) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      tooltip: 'Save',
+      child: Icon(Icons.save),
+    );
+  }
 }
 
 class TaskGridView extends StatefulWidget {

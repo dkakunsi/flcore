@@ -12,12 +12,9 @@ abstract class Domain {
 
   final String body;
 
-  final Widget defaultBody = GridView(
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      crossAxisSpacing: 4.0,
-      mainAxisSpacing: 4.0,
-    ),
+  final Widget defaultBody = Container(
+    width: 0,
+    height: 0,
   );
 
   Domain(this.name, this.body);
