@@ -190,9 +190,9 @@ class _TaskInputView extends StatefulWidget {
   final String _id;
 
   final Map<String, String> _attributes = {
-    'name': 'name',
-    'approved': 'approval',
-    'closedReason': 'reason',
+    'name': 'Task name',
+    'approved': 'Approval',
+    'closedReason': 'Reason',
   };
 
   final List<InputField> _inputFields = [];

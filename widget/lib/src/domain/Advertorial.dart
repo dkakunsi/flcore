@@ -208,11 +208,11 @@ class _AdvertorialInputView extends StatefulWidget {
   final String _id;
 
   final Map<String, String> _attributes = {
-    'code': 'code',
-    'name': 'advert title',
-    'url': 'advert url',
-    'provider_name': 'provider name',
-    'provider_email': 'provider email'
+    'code': 'Code',
+    'name': 'Title',
+    'url': 'Url',
+    'provider_name': 'Provider name',
+    'provider_email': 'Provider email'
   };
 
   final List<InputField> _inputFields = [];

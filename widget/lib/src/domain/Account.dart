@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
 
-import '../../Configuration.dart';
 import '../Domain.dart';
 import '../Util.dart';
+import '../component/InputField.dart';
+import '../../Configuration.dart';
 
 var config = Configuration();
 var api = Api(config.getConfig());
 
 class Account extends Domain {
+  _AccountInputView _accountInputView;
+
   Account() : super('Account', 'This is account');
 
   @override
@@ -36,11 +39,8 @@ class Account extends Domain {
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async {
-    return Column(children: [
-      Text('Admin input view'),
-    ]);
-  }
+  Future<Widget> getInputView(String entityId) async =>
+      this._accountInputView = _AccountInputView(entityId);
 
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
@@ -48,7 +48,15 @@ class Account extends Domain {
       backgroundColor: config.getConfig()['primaryColor'],
       hoverColor: config.getConfig()['focusColor'],
       elevation: 10,
-      onPressed: onPressed,
+      onPressed: () {
+        this._accountInputView.save().then((value) {
+          print(jsonEncode(value));
+        }).onError((error, stackTrace) {
+          print(error);
+        }).whenComplete(() {
+          onPressed();
+        });
+      },
       tooltip: 'Save',
       child: Icon(Icons.save),
     );
@@ -174,5 +182,153 @@ class _AccountGridViewState extends State<_AccountGridView> {
         );
       },
     );
+  }
+}
+
+class _AccountInputView extends StatefulWidget {
+  final String _id;
+
+  final Map<String, String> _attributes = {
+    'code': 'Username',
+    'name': 'Name',
+    'email': 'Email',
+    'password': 'Password',
+    'organisation': 'Organisation',
+    'role': 'Role'
+  };
+
+  final List<InputField> _inputFields = [];
+
+  final Map _data = {'account': {}};
+
+  _AccountInputView(this._id) {
+    this._attributes.forEach((key, name) {
+      this._inputFields.add(InputField(key, name));
+    });
+  }
+
+  @override
+  State<StatefulWidget> createState() => _AccountInputViewState();
+
+  Future<Map> _getDetailData() async {
+    if (this._id == null) {
+      return {};
+    }
+
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
+    return await api.getResource(context, 'account', this._id);
+  }
+
+  Future<Map> save() async {
+    Map payload = this._data['account'];
+    this._inputFields.forEach((inputField) {
+      dynamic value = inputField.controller.text;
+      if (inputField.elementId == 'role') {
+        value = getRoles(value);
+      }
+      setJSONValue(payload, inputField.elementId, value);
+    });
+
+    setJSONValue(payload, 'domain', 'account');
+
+    payload.remove('createdDate');
+    payload.remove('lastUpdatedDate');
+
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
+
+    if (payload['id'] == null) {
+      // create using workflow
+      return Future.delayed(
+        Duration(seconds: 2),
+        () => api.postResource(context, 'account', payload),
+      );
+    } else {
+      // update using resource
+      return Future.delayed(
+        Duration(seconds: 2),
+        () => api.putResource(context, 'advertorial', payload['id'], payload),
+      );
+    }
+  }
+
+  List getRoles(role) {
+    if (!role.contains(',')) {
+      return [role];
+    }
+
+    var roles = [];
+    role.split(',').forEach((element) {
+      roles.add(element);
+    });
+    return roles;
+  }
+}
+
+class _AccountInputViewState extends State<_AccountInputView> {
+  Future<Map> _account;
+
+  @override
+  void initState() {
+    super.initState();
+    this._account = widget._getDetailData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: FutureBuilder(
+          future: _createInputView(),
+          builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+            return snapshot.hasData
+                ? snapshot.data
+                : Container(
+                    width: 0,
+                    height: 0,
+                  );
+          }),
+    );
+  }
+
+  Future<Widget> _createInputView() async {
+    var result = await this._account;
+    if (result.isNotEmpty) {
+      widget._data['account'] = jsonDecode(result['message']);
+
+      widget._inputFields.forEach((inputField) {
+        var value = getJSONValue(widget._data['account'], inputField.elementId);
+        if (inputField.elementId == 'role') {
+          value = getRoles(value);
+        }
+        inputField.controller.text = value;
+      });
+    }
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: EdgeInsets.only(top: 20),
+        child: Column(
+          children: widget._inputFields,
+        ),
+      ),
+    );
+  }
+
+  String getRoles(List roles) {
+    var result = '';
+    roles.forEach((role) {
+      if (result == '') {
+        result = role;
+      } else {
+        result += ',' + role;
+      }
+    });
+    return result;
   }
 }

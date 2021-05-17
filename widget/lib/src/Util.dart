@@ -16,7 +16,7 @@ int gridCount(BuildContext context) {
   return crossAxisCount;
 }
 
-String getJSONValue(Map json, String attribute) {
+dynamic getJSONValue(Map json, String attribute) {
   if (attribute.contains('_')) {
     var elements = attribute.split('_');
     dynamic value = json;
@@ -28,7 +28,7 @@ String getJSONValue(Map json, String attribute) {
   return json[attribute] ?? '';
 }
 
-void setJSONValue(Map json, String attribute, String value) {
+void setJSONValue(Map json, String attribute, value) {
   if (attribute.contains('_')) {
     var elements = attribute.split('_');
     var length = elements.length;

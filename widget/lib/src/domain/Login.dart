@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
 
 import '../Domain.dart';
+import '../component/InputField.dart';
 import '../../Configuration.dart';
 
 var config = Configuration();
@@ -30,13 +31,20 @@ class Login extends Domain {
 }
 
 class LoginDataView extends StatelessWidget {
-  final TextEditingController _usernameController = TextEditingController();
+  final Map<String, String> _attributes = {
+    'username': 'Username',
+    'password': 'Password'
+  };
 
-  final TextEditingController _passwordController = TextEditingController();
+  final List<InputField> _inputFields = [];
 
   final Function _onLogin;
 
-  LoginDataView(this._onLogin);
+  LoginDataView(this._onLogin) {
+    this._attributes.forEach((key, name) {
+      this._inputFields.add(InputField(key, name));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,65 +103,8 @@ class LoginDataView extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 SizedBox(height: 10),
-                Container(
-                  width: isWebScreen ? 360 : mobileScreenWidth,
-                  child: Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.account_circle,
-                              color: Colors.grey, size: 30),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        filled: true,
-                        fillColor: config.getConfig()['secondaryColor'],
-                        focusColor: config.getConfig()['focusColor'],
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(
-                              color: config.getConfig()['focusColor']),
-                        ),
-                        hintText: 'Enter username',
-                      ),
-                      controller: this._usernameController,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: isWebScreen ? 360 : mobileScreenWidth,
-                  child: Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.vpn_key_rounded,
-                              color: Colors.grey, size: 30),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        filled: true,
-                        fillColor: config.getConfig()['secondaryColor'],
-                        focusColor: config.getConfig()['focusColor'],
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(
-                              color: config.getConfig()['focusColor']),
-                        ),
-                        hintText: 'Enter password',
-                      ),
-                      controller: this._passwordController,
-                    ),
-                  ),
-                ),
+                this._inputFields[0],
+                this._inputFields[1],
                 Container(
                   width: isWebScreen ? 360 : mobileScreenWidth,
                   child: Padding(
@@ -185,16 +136,17 @@ class LoginDataView extends StatelessWidget {
   }
 
   void _sendAuthentication() {
-    var username = this._usernameController.text;
-    var password = this._passwordController.text;
-    var breadcrumbId = Uuid().v4();
-
-    var future = api.login(breadcrumbId, username, password);
-
-    future.then((value) {
-      var token = jsonDecode(value['message']);
-      config.setToken(token);
-      this._onLogin();
+    var jsonData = {};
+    this._inputFields.forEach((inputField) {
+      jsonData[inputField.elementId] = inputField.controller.text;
     });
+
+    api.login(Uuid().v4(), jsonData['username'], jsonData['password']).then(
+      (value) {
+        var token = jsonDecode(value['message']);
+        config.setToken(token);
+        this._onLogin();
+      },
+    );
   }
 }

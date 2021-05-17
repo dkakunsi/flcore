@@ -45,7 +45,7 @@ class InputFieldState extends State<InputField> {
               borderRadius: BorderRadius.circular(25),
               borderSide: BorderSide(color: config.getConfig()['focusColor']),
             ),
-            hintText: 'Enter ' + widget.elementName,
+            labelText: widget.elementName,
           ),
           controller: widget.controller,
         ),
