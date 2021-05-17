@@ -186,7 +186,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "At: " + (data[index]['lastUpdatedDate'] ?? ''),
+                          "At: " + toDateTime(data[index]['lastUpdatedDate']),
                         ),
                       ),
                     ),

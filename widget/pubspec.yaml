@@ -18,6 +18,8 @@ dependencies:
 
   uuid: ^3.0.4
 
+  intl: ^0.17.0
+
   api:
     path: ../api
     # git:

@@ -1,6 +1,7 @@
 library widget;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 bool isWebScreen(BuildContext context) =>
     MediaQuery.of(context).size.width > 500;
@@ -53,4 +54,13 @@ void setJSONValue(Map json, String attribute, value) {
   } else {
     json[attribute] = value;
   }
+}
+
+var formatter = DateFormat('yyyy-MM-dd hh:mm:ss');
+String toDateTime(String dateTime) {
+  if (dateTime == null) {
+    return '';
+  }
+  var dt = DateTime.parse(dateTime);
+  return formatter.format(dt);
 }
