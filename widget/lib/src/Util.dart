@@ -3,8 +3,10 @@ library widget;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-bool isWebScreen(BuildContext context) =>
-    MediaQuery.of(context).size.width > 500;
+double getScreenWidth(BuildContext context) =>
+    MediaQuery.of(context).size.width;
+
+bool isWebScreen(BuildContext context) => getScreenWidth(context) > 600;
 
 double getMobileScreenWidth(BuildContext context) =>
     MediaQuery.of(context).size.width * 0.8;
@@ -12,9 +14,20 @@ double getMobileScreenWidth(BuildContext context) =>
 int gridCount(BuildContext context) {
   var crossAxisCount = 1;
   if (isWebScreen(context)) {
-    crossAxisCount = 3;
+    crossAxisCount = 2;
   }
   return crossAxisCount;
+}
+
+double getGridAspectRation(BuildContext context) {
+  var width = getMobileScreenWidth(context);
+  var height = 160;
+  if (isWebScreen(context)) {
+    width = getScreenWidth(context);
+    width /= 2;
+    height = 220;
+  }
+  return width / height;
 }
 
 dynamic getJSONValue(Map json, String attribute) {
@@ -63,4 +76,12 @@ String toDateTime(String dateTime) {
   }
   var dt = DateTime.parse(dateTime);
   return formatter.format(dt);
+}
+
+String getViewData(Map data) {
+  var viewData = data['name'];
+  if (viewData == null) {
+    viewData = data['id'];
+  }
+  return viewData;
 }

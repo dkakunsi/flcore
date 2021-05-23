@@ -128,6 +128,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8.0,
+        childAspectRatio: getGridAspectRation(context),
       ),
       itemBuilder: (BuildContext context, int index) {
         return Container(
@@ -146,7 +147,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
           padding: EdgeInsets.only(top: 1),
           child: GridTile(
             header: GridTileBar(
-              title: Text(data[index]['name']),
+              title: Text(data[index]['code']),
               backgroundColor: config.getConfig()['tileColor'],
             ),
             child: InkResponse(
@@ -159,7 +160,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "Code: " + data[index]['code'],
+                          "Name: " + data[index]['name'],
                         ),
                       ),
                     ),
@@ -177,7 +178,7 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "By: " + (data[index]['lastUpdatedBy'] ?? ''),
+                          "Provider: " + (data[index]['provider']['name']),
                         ),
                       ),
                     ),
@@ -186,7 +187,8 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text(
-                          "At: " + toDateTime(data[index]['lastUpdatedDate']),
+                          "Created At: " +
+                              toDateTime(data[index]['createdDate']),
                         ),
                       ),
                     ),
@@ -207,12 +209,12 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
 class _AdvertorialInputView extends StatefulWidget {
   final String _id;
 
-  final Map<String, String> _attributes = {
-    'code': 'Code',
-    'name': 'Title',
-    'url': 'Url',
-    'provider_name': 'Provider name',
-    'provider_email': 'Provider email'
+  final Map<String, Map<String, dynamic>> _attributes = {
+    'code': {'title': 'Code', 'icon': Icons.code},
+    'name': {'title': 'Title', 'icon': Icons.assignment},
+    'url': {'title': 'Url', 'icon': Icons.public},
+    'provider_name': {'title': 'Provider name', 'icon': Icons.account_circle},
+    'provider_email': {'title': 'Provider email', 'icon': Icons.alternate_email}
   };
 
   final List<InputField> _inputFields = [];
@@ -220,8 +222,10 @@ class _AdvertorialInputView extends StatefulWidget {
   final Map _data = {'advert': {}};
 
   _AdvertorialInputView(this._id) {
-    this._attributes.forEach((key, name) {
-      this._inputFields.add(InputField(key, name));
+    this._attributes.forEach((key, detail) {
+      var name = detail['title'];
+      var icon = detail['icon'];
+      this._inputFields.add(InputField(key, name, icon));
     });
   }
 

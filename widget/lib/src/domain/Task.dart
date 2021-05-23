@@ -115,11 +115,7 @@ class _TaskGridViewState extends State<_TaskGridView> {
   Future<Widget> _createGridView() async {
     var result = await _tasks;
     var data = jsonDecode(result['message']);
-
-    var crossAxisCount = 2;
-    if (isWebScreen(context)) {
-      crossAxisCount = 4;
-    }
+    var crossAxisCount = gridCount(context);
 
     return GridView.builder(
       padding: EdgeInsets.all(10.0),
@@ -128,6 +124,7 @@ class _TaskGridViewState extends State<_TaskGridView> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8.0,
+        childAspectRatio: getGridAspectRation(context),
       ),
       itemBuilder: (BuildContext context, int index) {
         return Container(
@@ -146,7 +143,7 @@ class _TaskGridViewState extends State<_TaskGridView> {
           padding: EdgeInsets.only(top: 1),
           child: GridTile(
             header: GridTileBar(
-              title: Text(data[index]['processInstanceId']),
+              title: Text(getViewData(data[index]['processInstance'])),
               backgroundColor: config.getConfig()['tileColor'],
             ),
             child: InkResponse(
@@ -189,10 +186,10 @@ class _TaskGridViewState extends State<_TaskGridView> {
 class _TaskInputView extends StatefulWidget {
   final String _id;
 
-  final Map<String, String> _attributes = {
-    'name': 'Task name',
-    'approved': 'Approval',
-    'closedReason': 'Reason',
+  final Map<String, Map<String, dynamic>> _attributes = {
+    'name': {'title': 'Task name', 'icon': Icons.assignment},
+    'approved': {'title': 'Approval', 'icon': Icons.check},
+    'closedReason': {'title': 'Reason'},
   };
 
   final List<InputField> _inputFields = [];
@@ -200,8 +197,10 @@ class _TaskInputView extends StatefulWidget {
   final Map _data = {'task': {}};
 
   _TaskInputView(this._id) {
-    this._attributes.forEach((key, name) {
-      this._inputFields.add(InputField(key, name));
+    this._attributes.forEach((key, detail) {
+      var name = detail['title'];
+      var icon = detail['icon'];
+      this._inputFields.add(InputField(key, name, icon));
     });
   }
 

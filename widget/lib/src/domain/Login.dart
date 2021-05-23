@@ -31,9 +31,9 @@ class Login extends Domain {
 }
 
 class LoginDataView extends StatelessWidget {
-  final Map<String, String> _attributes = {
-    'username': 'Username',
-    'password': 'Password'
+  final Map<String, Map<String, dynamic>> _attributes = {
+    'username': {'title': 'Username', 'icon': Icons.account_circle},
+    'password': {'title': 'Password', 'icon': Icons.vpn_key_rounded}
   };
 
   final List<InputField> _inputFields = [];
@@ -41,8 +41,10 @@ class LoginDataView extends StatelessWidget {
   final Function _onLogin;
 
   LoginDataView(this._onLogin) {
-    this._attributes.forEach((key, name) {
-      this._inputFields.add(InputField(key, name));
+    this._attributes.forEach((key, detail) {
+      var name = detail['title'].toString();
+      var icon = detail['icon'];
+      this._inputFields.add(InputField(key, name, icon));
     });
   }
 

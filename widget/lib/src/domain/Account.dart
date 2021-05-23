@@ -114,11 +114,7 @@ class _AccountGridViewState extends State<_AccountGridView> {
   Future<Widget> _createGridView() async {
     var result = await _tasks;
     var data = jsonDecode(result['message']);
-
-    var crossAxisCount = 2;
-    if (isWebScreen(context)) {
-      crossAxisCount = 4;
-    }
+    var crossAxisCount = gridCount(context);
 
     return GridView.builder(
       padding: EdgeInsets.all(10.0),
@@ -127,6 +123,7 @@ class _AccountGridViewState extends State<_AccountGridView> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8.0,
+        childAspectRatio: getGridAspectRation(context),
       ),
       itemBuilder: (BuildContext context, int index) {
         return Container(
@@ -188,13 +185,13 @@ class _AccountGridViewState extends State<_AccountGridView> {
 class _AccountInputView extends StatefulWidget {
   final String _id;
 
-  final Map<String, String> _attributes = {
-    'code': 'Username',
-    'name': 'Name',
-    'email': 'Email',
-    'password': 'Password',
-    'organisation': 'Organisation',
-    'role': 'Role'
+  final Map<String, Map<String, dynamic>> _attributes = {
+    'code': {'title': 'Username', 'icon': Icons.code},
+    'name': {'title': 'Name', 'icon': Icons.tag},
+    'email': {'title': 'Email', 'icon': Icons.alternate_email_rounded},
+    'password': {'title': 'Password', 'icon': Icons.vpn_key},
+    'organisation': {'title': 'Organisation', 'icon': Icons.build},
+    'role': {'title': 'Role', 'icon': Icons.perm_device_info}
   };
 
   final List<InputField> _inputFields = [];
@@ -202,8 +199,10 @@ class _AccountInputView extends StatefulWidget {
   final Map _data = {'account': {}};
 
   _AccountInputView(this._id) {
-    this._attributes.forEach((key, name) {
-      this._inputFields.add(InputField(key, name));
+    this._attributes.forEach((key, detail) {
+      var name = detail['title'];
+      var icon = detail['icon'];
+      this._inputFields.add(InputField(key, name, icon));
     });
   }
 

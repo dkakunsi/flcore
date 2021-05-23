@@ -15,7 +15,9 @@ class InputField extends StatefulWidget {
 
   final String elementName;
 
-  InputField(this.elementId, this.elementName);
+  final IconData icon;
+
+  InputField(this.elementId, this.elementName, [this.icon]);
 
   @override
   State<StatefulWidget> createState() => InputFieldState();
@@ -32,7 +34,8 @@ class InputFieldState extends State<InputField> {
           decoration: InputDecoration(
             prefixIcon: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.account_circle, color: Colors.grey, size: 30),
+              child: Icon(widget.icon ?? Icons.pending,
+                  color: Colors.grey, size: 30),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25),
