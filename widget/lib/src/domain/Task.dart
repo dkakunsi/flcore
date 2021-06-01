@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
+import 'package:widget/src/component/DataPage.dart';
 
 import '../Domain.dart';
 import '../Util.dart';
@@ -20,12 +21,12 @@ class Task extends Domain {
   Task() : super('Task', 'This is task');
 
   @override
-  Future<Widget> getDataView(Function onAction) async {
+  SearchableWidget getDataView(Function onAction) {
     return _TaskGridView(onAction);
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async =>
+  Widget getInputView(String entityId) =>
       this._taskInputView = _TaskInputView(entityId);
 
   @override
@@ -53,19 +54,17 @@ class Task extends Domain {
   }
 }
 
-class _TaskGridView extends StatefulWidget {
+class _TaskGridView extends SearchableWidget {
+  final _TaskGridViewState _state = _TaskGridViewState();
+
   final Function _onAction;
 
   _TaskGridView(this._onAction);
 
   @override
-  State<StatefulWidget> createState() => _TaskGridViewState();
+  State<StatefulWidget> createState() => this._state;
 
   Future<Map> _getGridData() async {
-    Map<String, String> context = {
-      "token": config.getToken()['id'],
-      "breadcrumbId": Uuid().v4()
-    };
     var criteria = {
       "domain": "index",
       "page": 0,
@@ -83,6 +82,37 @@ class _TaskGridView extends StatefulWidget {
         }
       ]
     };
+    return await _load(criteria);
+  }
+
+  @override
+  void search(String value) {
+    var criteria = {
+      "domain": "index",
+      "page": 0,
+      "size": 10,
+      "criteria": [
+        {
+          "attribute": "organisation",
+          "value": "PDE",
+          "operator": "equals",
+        },
+        {
+          "attribute": "name",
+          "value": value,
+          "operator": "contains",
+        }
+      ]
+    };
+    var result = _load(criteria);
+    this._state.setTasks(result);
+  }
+
+  Future<Map> _load(Map criteria) async {
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
     return await api.search(context, 'workflowtask', criteria);
   }
 }
@@ -94,6 +124,12 @@ class _TaskGridViewState extends State<_TaskGridView> {
   void initState() {
     super.initState();
     this._tasks = widget._getGridData();
+  }
+
+  void setTasks(Future<Map> tasks) {
+    setState(() {
+      this._tasks = tasks;
+    });
   }
 
   @override

@@ -13,13 +13,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   http: ^0.12.1
-
+  flutter_search_bar: ^2.1.0
   uuid: ^3.0.4
-
   intl: ^0.17.0
-
   api:
     path: ../api
     # git:

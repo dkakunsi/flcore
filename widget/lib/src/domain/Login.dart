@@ -6,6 +6,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
+import 'package:widget/src/component/DataPage.dart';
 
 import '../Domain.dart';
 import '../component/InputField.dart';
@@ -18,19 +19,19 @@ class Login extends Domain {
   Login() : super('Login', 'This is login');
 
   @override
-  Future<Widget> getDataView(Function onLogin) async {
+  SearchableWidget getDataView(Function onLogin) {
     return LoginDataView(onLogin);
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async {
+  Widget getInputView(String entityId) {
     return Column(children: [
       Text('Login input view'),
     ]);
   }
 }
 
-class LoginDataView extends StatelessWidget {
+class LoginDataView extends SearchableWidget {
   final Map<String, Map<String, dynamic>> _attributes = {
     'username': {'title': 'Username', 'icon': Icons.account_circle},
     'password': {'title': 'Password', 'icon': Icons.vpn_key_rounded}
@@ -48,6 +49,29 @@ class LoginDataView extends StatelessWidget {
     });
   }
 
+  void _sendAuthentication() {
+    var jsonData = {};
+    this._inputFields.forEach((inputField) {
+      jsonData[inputField.elementId] = inputField.controller.text;
+    });
+
+    api.login(Uuid().v4(), jsonData['username'], jsonData['password']).then(
+      (value) {
+        var token = jsonDecode(value['message']);
+        config.setToken(token);
+        this._onLogin();
+      },
+    );
+  }
+
+  @override
+  void search(String value) {}
+
+  @override
+  State<StatefulWidget> createState() => _LoginDataViewState();
+}
+
+class _LoginDataViewState extends State<LoginDataView> {
   @override
   Widget build(BuildContext context) {
     bool isWebScreen = MediaQuery.of(context).size.width > 500;
@@ -105,14 +129,14 @@ class LoginDataView extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 SizedBox(height: 10),
-                this._inputFields[0],
-                this._inputFields[1],
+                widget._inputFields[0],
+                widget._inputFields[1],
                 Container(
                   width: isWebScreen ? 360 : mobileScreenWidth,
                   child: Padding(
                     padding: EdgeInsets.only(top: 10, right: 40, left: 40),
                     child: ElevatedButton(
-                      onPressed: _sendAuthentication,
+                      onPressed: widget._sendAuthentication,
                       child: Text('Login',
                           style: TextStyle(
                             fontSize: 14,
@@ -134,21 +158,6 @@ class LoginDataView extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _sendAuthentication() {
-    var jsonData = {};
-    this._inputFields.forEach((inputField) {
-      jsonData[inputField.elementId] = inputField.controller.text;
-    });
-
-    api.login(Uuid().v4(), jsonData['username'], jsonData['password']).then(
-      (value) {
-        var token = jsonDecode(value['message']);
-        config.setToken(token);
-        this._onLogin();
-      },
     );
   }
 }

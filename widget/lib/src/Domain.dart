@@ -1,6 +1,7 @@
 library widget;
 
 import 'package:flutter/material.dart';
+import 'package:widget/src/component/DataPage.dart';
 
 import 'domain/Account.dart';
 import 'domain/Advertorial.dart';
@@ -27,13 +28,13 @@ abstract class Domain {
         });
   }
 
-  Future<Widget> getDataView(Function onTap);
+  SearchableWidget getDataView(Function onTap);
 
   FloatingActionButton getGridActionButton(Function onPressed) {
     return null;
   }
 
-  Future<Widget> getInputView(String entityId);
+  Widget getInputView(String entityId);
 
   FloatingActionButton getInputActionButton(Function onPressed) {
     return null;

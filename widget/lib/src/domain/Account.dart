@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:api/api.dart';
+import 'package:widget/src/component/DataPage.dart';
 
 import '../Domain.dart';
 import '../Util.dart';
@@ -20,7 +21,7 @@ class Account extends Domain {
   Account() : super('Account', 'This is account');
 
   @override
-  Future<Widget> getDataView(Function onAction) async {
+  SearchableWidget getDataView(Function onAction) {
     return _AccountGridView(onAction);
   }
 
@@ -39,7 +40,7 @@ class Account extends Domain {
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async =>
+  Widget getInputView(String entityId) =>
       this._accountInputView = _AccountInputView(entityId);
 
   @override
@@ -63,36 +64,62 @@ class Account extends Domain {
   }
 }
 
-class _AccountGridView extends StatefulWidget {
+class _AccountGridView extends SearchableWidget {
+  final _AccountGridViewState _state = _AccountGridViewState();
+
   final Function _onAction;
 
   _AccountGridView(this._onAction);
 
   @override
-  State<StatefulWidget> createState() => _AccountGridViewState();
+  State<StatefulWidget> createState() => this._state;
 
   Future<Map> _getGridData() async {
-    Map<String, String> context = {
-      "token": config.getToken()['id'],
-      "breadcrumbId": Uuid().v4()
-    };
     var criteria = {
       "domain": "index",
       "page": 0,
       "size": 50,
       "criteria": [],
     };
+    return await _load(criteria);
+  }
+
+  @override
+  void search(String value) {
+    var criteria = {
+      "domain": "index",
+      "page": 0,
+      "size": 50,
+      "criteria": [
+        {"attribute": "name", "value": value, "operator": "contains"}
+      ],
+    };
+    var result = _load(criteria);
+    this._state.setAccounts(result);
+  }
+
+  Future<Map> _load(Map criteria) async {
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
+    };
     return await api.search(context, 'account', criteria);
   }
 }
 
 class _AccountGridViewState extends State<_AccountGridView> {
-  Future<Map> _tasks;
+  Future<Map> _accounts;
 
   @override
   void initState() {
     super.initState();
-    this._tasks = widget._getGridData();
+    this._accounts = widget._getGridData();
+  }
+
+  void setAccounts(Future<Map> accounts) {
+    setState(() {
+      this._accounts = accounts;
+    });
   }
 
   @override
@@ -112,7 +139,7 @@ class _AccountGridViewState extends State<_AccountGridView> {
   }
 
   Future<Widget> _createGridView() async {
-    var result = await _tasks;
+    var result = await _accounts;
     var data = jsonDecode(result['message']);
     var crossAxisCount = gridCount(context);
 

@@ -10,6 +10,7 @@ import 'package:api/api.dart';
 import '../Domain.dart';
 import '../Util.dart';
 import '../component/InputField.dart';
+import '../component/DataPage.dart';
 import '../../Configuration.dart';
 
 var config = Configuration();
@@ -21,12 +22,12 @@ class Advertorial extends Domain {
   Advertorial() : super('Advertorial', 'This is advertorial');
 
   @override
-  Future<Widget> getDataView(Function onAction) async {
+  SearchableWidget getDataView(Function onAction) {
     return AdvertorialGridView(onAction);
   }
 
   @override
-  Future<Widget> getInputView(String entityId) async =>
+  Widget getInputView(String entityId) =>
       this._advertorialInputView = _AdvertorialInputView(entityId);
 
   @override
@@ -68,24 +69,44 @@ class Advertorial extends Domain {
   }
 }
 
-class AdvertorialGridView extends StatefulWidget {
+class AdvertorialGridView extends SearchableWidget {
+  final AdvertorialGridViewState _state = AdvertorialGridViewState();
+
   final Function _onAction;
 
   AdvertorialGridView(this._onAction);
 
   @override
-  State<StatefulWidget> createState() => AdvertorialGridViewState();
+  State<StatefulWidget> createState() => this._state;
 
   Future<Map> _getGridData() async {
-    Map<String, String> context = {
-      "token": config.getToken()['id'],
-      "breadcrumbId": Uuid().v4()
-    };
     var criteria = {
       "domain": "index",
       "page": 0,
       "size": 50,
       "criteria": [],
+    };
+    return await _load(criteria);
+  }
+
+  @override
+  void search(String value) {
+    var criteria = {
+      "domain": "index",
+      "page": 0,
+      "size": 50,
+      "criteria": [
+        {"attribute": "name", "value": value, "operator": "contains"}
+      ],
+    };
+    var result = _load(criteria);
+    this._state.setAdvertorials(result);
+  }
+
+  Future<Map> _load(Map criteria) async {
+    Map<String, String> context = {
+      "token": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4()
     };
     return await api.search(context, 'advertorial', criteria);
   }
@@ -203,6 +224,12 @@ class AdvertorialGridViewState extends State<AdvertorialGridView> {
         );
       },
     );
+  }
+
+  void setAdvertorials(Future<Map> advertorials) {
+    setState(() {
+      this._advertorials = advertorials;
+    });
   }
 }
 
