@@ -10,7 +10,7 @@ void main() {
 
   test('adds one to input values', () {
     var context = {
-      "token": "c867de1a-6470-483c-b676-44d2100061c3",
+      "Authorization": "c867de1a-6470-483c-b676-44d2100061c3",
       "breadcrumbId": "BreadcrumbId004"
     };
 

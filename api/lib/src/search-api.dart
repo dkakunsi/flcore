@@ -19,14 +19,9 @@ class SearchApi extends BaseApi {
         path: this.path,
         queryParameters: query);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
     var response = await this
         .client
-        .post(uri, body: jsonEncode(criteria), headers: headers);
+        .post(uri, body: jsonEncode(criteria), headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }

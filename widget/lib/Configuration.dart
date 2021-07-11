@@ -2,6 +2,7 @@ library widget;
 
 import 'dart:convert';
 import 'dart:html' show window;
+import 'package:jwt_decode/jwt_decode.dart';
 
 class Configuration {
   static final Configuration _singleton = Configuration._internal();
@@ -25,15 +26,38 @@ class Configuration {
     if (token == null) {
       return {};
     }
-    return jsonDecode(token);
+    var parsed = jsonDecode(token);
+    var expire = parsed['expire'] * 1000;
+    var now = new DateTime.now().millisecondsSinceEpoch;
+    if (now > expire) {
+      removeToken();
+      return {};
+    }
+    return parsed;
   }
 
   void setToken(Map token) {
-    window.localStorage['token'] = jsonEncode(token);
+    var accessToken = token['access_token'];
+
+    // build parsed object
+    var payload = Jwt.parseJwt(accessToken);
+    var roles = payload['realm_access']['roles'];
+    var name = payload['name'];
+    var email = payload['email'];
+    var exp = payload['exp'];
+    var parsedToken = {
+      'id': accessToken,
+      'role': roles,
+      'name': name,
+      'email': email,
+      'expire': exp
+    };
+
+    window.localStorage['token'] = jsonEncode(parsedToken);
   }
 
-  bool isAdmin() {
-    return this.hasRole('admin');
+  void removeToken() {
+    window.localStorage.remove('token');
   }
 
   bool hasRole(String role) {

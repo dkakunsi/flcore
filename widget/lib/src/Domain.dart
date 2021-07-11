@@ -3,7 +3,6 @@ library widget;
 import 'package:flutter/material.dart';
 import 'package:widget/src/component/DataPage.dart';
 
-import 'domain/Account.dart';
 import 'domain/Advertorial.dart';
 import 'domain/Login.dart';
 import 'domain/Task.dart';
@@ -50,8 +49,5 @@ Map<String, Domain> getDomains(List roles) {
     'Advertorial': Advertorial(),
     'Task': Task(),
   };
-  if (roles.contains('admin')) {
-    domains.putIfAbsent('Account', () => Account());
-  }
   return domains;
 }

@@ -46,7 +46,8 @@ class Advertorial extends Domain {
 
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
-    if (this._advertorialInputView._id != null && !config.isAdmin()) {
+    if (this._advertorialInputView._id != null &&
+        !config.hasRole('advertorial_management_user')) {
       return null;
     }
 
@@ -105,7 +106,7 @@ class AdvertorialGridView extends SearchableWidget {
 
   Future<Map> _load(Map criteria) async {
     Map<String, String> context = {
-      "token": config.getToken()['id'],
+      "Authorization": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
     return await api.search(context, 'advertorial', criteria);
@@ -265,7 +266,7 @@ class _AdvertorialInputView extends StatefulWidget {
     }
 
     Map<String, String> context = {
-      "token": config.getToken()['id'],
+      "Authorization": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
     return await api.getResource(context, 'advertorial', this._id);
@@ -284,8 +285,9 @@ class _AdvertorialInputView extends StatefulWidget {
     payload.remove('lastUpdatedDate');
 
     Map<String, String> context = {
-      "token": config.getToken()['id'],
-      "breadcrumbId": Uuid().v4()
+      "Authorization": config.getToken()['id'],
+      "breadcrumbId": Uuid().v4(),
+      "action": "advertorial.submit"
     };
 
     if (payload['id'] == null) {
@@ -293,15 +295,9 @@ class _AdvertorialInputView extends StatefulWidget {
 
       payload['status'] = 'Pengajuan telah terdaftar';
 
-      var jsonData = {
-        'domain': 'workflow',
-        'action': 'advertorial.submit',
-        'entity': payload,
-        'variable': {'organisation': 'PDE'}
-      };
       return Future.delayed(
         Duration(seconds: 2),
-        () => api.createInstance(context, jsonData),
+        () => api.postResource(context, "advertorial", payload),
       );
     } else {
       // update using resource

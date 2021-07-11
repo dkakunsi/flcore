@@ -34,8 +34,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Domain _selectedDomain;
 
-  SearchableWidget _dataView;
-
   String _entityId;
 
   Function _viewAction;
@@ -63,16 +61,16 @@ class _MyHomePageState extends State<MyHomePage> {
     this._entityId = null;
     this._domains = getDomains(config.getToken()['role']);
     this._selectedDomain = this._domains.values.elementAt(0);
-    this._dataView = this._selectedDomain.getDataView(this._viewAction);
-    this._drawerWidgets = getDrawerWidgets(this._domains);
 
     this._viewAction = this._selectedDomain.name == 'Login'
         ? this._setLogin
         : this._openInputView;
+
+    this._drawerWidgets = getDrawerWidgets(this._domains);
   }
 
   void onSubmitted(String value) {
-    this._dataView.search(value);
+    this._selectedDomain.getDataView(this._viewAction).search(value);
   }
 
   AppBar _buildAppBar(BuildContext context) {
@@ -110,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       this._action = Action.GRID_VIEW;
       this._selectedDomain = this._domains[domain];
-      this._dataView = this._selectedDomain.getDataView(this._viewAction);
     });
     Navigator.pop(context);
   }
@@ -133,12 +130,12 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       this._domains = getDomains(config.getToken()['role']);
       this._selectedDomain = this._domains.values.elementAt(0);
-      this._dataView = this._selectedDomain.getDataView(this._viewAction);
-      this._drawerWidgets = getDrawerWidgets(this._domains);
 
       this._viewAction = this._selectedDomain.name == 'Login'
           ? this._setLogin
           : this._openInputView;
+
+      this._drawerWidgets = getDrawerWidgets(this._domains);
     });
   }
 
@@ -148,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: this.searchBar.build(context),
       body: Container(
         child: this._action == Action.GRID_VIEW
-            ? this._dataView
+            ? this._selectedDomain.getDataView(this._viewAction)
             : this._selectedDomain.getInputView(this._entityId),
       ),
       drawer: Drawer(

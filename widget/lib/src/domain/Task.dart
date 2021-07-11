@@ -31,7 +31,7 @@ class Task extends Domain {
 
   @override
   FloatingActionButton getInputActionButton(Function onPressed) {
-    if (!config.hasRole('user')) {
+    if (!config.hasRole('workflow_management_user')) {
       return null;
     }
 
@@ -110,7 +110,7 @@ class _TaskGridView extends SearchableWidget {
 
   Future<Map> _load(Map criteria) async {
     Map<String, String> context = {
-      "token": config.getToken()['id'],
+      "Authorization": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
     return await api.search(context, 'workflowtask', criteria);
@@ -249,9 +249,10 @@ class _TaskInputView extends StatefulWidget {
     }
 
     Map<String, String> context = {
-      "token": config.getToken()['id'],
+      "Authorization": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
+
     var criteria = {
       "domain": "index",
       "page": 0,
@@ -275,7 +276,7 @@ class _TaskInputView extends StatefulWidget {
     });
 
     Map<String, String> context = {
-      "token": config.getToken()['id'],
+      "Authorization": config.getToken()['id'],
       "breadcrumbId": Uuid().v4()
     };
 

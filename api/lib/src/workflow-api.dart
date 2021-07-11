@@ -13,14 +13,9 @@ class WorkflowApi extends BaseApi {
   Future<Map> createInstance(Map<String, String> context, Map jsonData) async {
     var uri = Uri(host: getHost(), port: getPort(), path: this.path);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
     var response = await this
         .client
-        .post(uri, body: jsonEncode(jsonData), headers: headers);
+        .post(uri, body: jsonEncode(jsonData), headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
@@ -29,11 +24,6 @@ class WorkflowApi extends BaseApi {
     var uri =
         Uri(host: getHost(), port: getPort(), path: this.path + "/" + taskId);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
     var jsonData = {
       'domain': 'workflowtask',
       'variable': {'approved': 'true'}
@@ -41,7 +31,7 @@ class WorkflowApi extends BaseApi {
 
     var response = await this
         .client
-        .put(uri, body: jsonEncode(jsonData), headers: headers);
+        .put(uri, body: jsonEncode(jsonData), headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
@@ -51,11 +41,6 @@ class WorkflowApi extends BaseApi {
     var uri =
         Uri(host: getHost(), port: getPort(), path: this.path + "/" + taskId);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
     var jsonData = {
       'domain': 'workflowtask',
       'variable': {'approved': 'false', 'closeReason': reason}
@@ -63,7 +48,7 @@ class WorkflowApi extends BaseApi {
 
     var response = await this
         .client
-        .put(uri, body: jsonEncode(jsonData), headers: headers);
+        .put(uri, body: jsonEncode(jsonData), headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }

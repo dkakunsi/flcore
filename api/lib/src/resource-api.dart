@@ -19,14 +19,9 @@ class ResourceApi extends BaseApi {
         path: this.path,
         queryParameters: query);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
     var response = await this
         .client
-        .post(uri, body: jsonEncode(jsonData), headers: headers);
+        .post(uri, body: jsonEncode(jsonData), headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
@@ -40,14 +35,9 @@ class ResourceApi extends BaseApi {
         path: this.path + "/" + id,
         queryParameters: query);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
     var response = await this
         .client
-        .put(uri, body: jsonEncode(jsonData), headers: headers);
+        .put(uri, body: jsonEncode(jsonData), headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
@@ -61,12 +51,7 @@ class ResourceApi extends BaseApi {
         scheme: "http",
         queryParameters: query);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
-    var response = await this.client.get(uri, headers: headers);
+    var response = await this.client.get(uri, headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
@@ -80,12 +65,7 @@ class ResourceApi extends BaseApi {
         path: this.path + "/code/" + code,
         queryParameters: query);
 
-    Map<String, String> headers = {
-      'Authorization': context['token'],
-      'breadcrumbId': context['breadcrumbId']
-    };
-
-    var response = await this.client.get(uri, headers: headers);
+    var response = await this.client.get(uri, headers: context);
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
