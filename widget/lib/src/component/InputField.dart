@@ -1,7 +1,6 @@
 library widget;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 import '../Util.dart';
 import '../../Configuration.dart';

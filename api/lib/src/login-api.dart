@@ -1,14 +1,11 @@
 library api;
 
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import './base-api.dart';
 
-const KC_PATH = 'auth/realms/tahuna/protocol/openid-connect/token';
-
 class LoginApi extends BaseApi {
-  LoginApi(Map<String, dynamic> configuration) : super(configuration, KC_PATH) {
+  LoginApi(Map<String, dynamic> configuration)
+      : super(configuration, getRealmsUri(configuration)) {
     this.client = http.Client();
   }
 
@@ -36,5 +33,10 @@ class LoginApi extends BaseApi {
     var response = await this.client.post(uri, body: value, headers: headers);
 
     return {'type': 'SUCCESS', 'message': response.body};
+  }
+
+  static String getRealmsUri(Map<String, dynamic> configuration) {
+    var realm = configuration["kc"]["realm"];
+    return 'auth/realms/${realm}/protocol/openid-connect/token';
   }
 }

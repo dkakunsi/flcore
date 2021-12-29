@@ -24,10 +24,7 @@ class WorkflowApi extends BaseApi {
     var uri =
         Uri(host: getHost(), port: getPort(), path: this.path + "/" + taskId);
 
-    var jsonData = {
-      'domain': 'workflowtask',
-      'variable': {'approved': 'true'}
-    };
+    var jsonData = {'domain': 'workflowtask', 'approved': 'true'};
 
     var response = await this
         .client
@@ -43,7 +40,8 @@ class WorkflowApi extends BaseApi {
 
     var jsonData = {
       'domain': 'workflowtask',
-      'variable': {'approved': 'false', 'closeReason': reason}
+      'approved': 'false',
+      'closeReason': reason
     };
 
     var response = await this

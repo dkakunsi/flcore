@@ -1,7 +1,6 @@
 name: api
 description: A API client library to connect with mscore gateway.
 version: 0.0.1
-author: devit
 homepage:
 
 environment:

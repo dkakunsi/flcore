@@ -71,7 +71,7 @@ class _TaskGridView extends SearchableWidget {
       "size": 10,
       "criteria": [
         {
-          "attribute": "organisation",
+          "attribute": "processInstance.organisation",
           "value": "PDE",
           "operator": "equals",
         },
@@ -93,7 +93,7 @@ class _TaskGridView extends SearchableWidget {
       "size": 10,
       "criteria": [
         {
-          "attribute": "organisation",
+          "attribute": "processInstance.organisation",
           "value": "PDE",
           "operator": "equals",
         },

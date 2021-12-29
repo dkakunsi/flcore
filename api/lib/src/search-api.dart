@@ -6,7 +6,7 @@ import 'dart:convert';
 
 class SearchApi extends BaseApi {
   SearchApi(Map<String, dynamic> configuration)
-      : super(configuration, 'search') {
+      : super(configuration, 'api/search') {
     this.client = http.Client();
   }
 

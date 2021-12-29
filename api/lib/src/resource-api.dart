@@ -69,4 +69,20 @@ class ResourceApi extends BaseApi {
 
     return {'type': 'SUCCESS', 'message': response.body};
   }
+
+  Future<Map> search(
+      Map<String, String> context, String domain, Map criteria) async {
+    var query = {'domain': domain};
+    var uri = Uri(
+        host: getHost(),
+        port: getPort(),
+        path: this.path,
+        queryParameters: query);
+
+    var response = await this
+        .client
+        .post(uri, body: jsonEncode(criteria), headers: context);
+
+    return {'type': 'SUCCESS', 'message': response.body};
+  }
 }
