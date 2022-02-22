@@ -2,14 +2,17 @@ library api;
 
 import 'package:http/http.dart' as http;
 
-abstract class BaseApi {
+abstract class BaseRemoteDataSource {
   http.Client client;
 
   final Map<String, dynamic> configuration;
 
-  String path;
+  final String path;
 
-  BaseApi(this.configuration, this.path) {
+  BaseRemoteDataSource({
+    this.configuration,
+    this.path,
+  }) {
     this.client = http.Client();
   }
 
