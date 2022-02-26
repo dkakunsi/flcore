@@ -10,27 +10,15 @@ class WorkflowRepository extends Repository {
 
   WorkflowRepository({
     @required this.workflowDataSource,
-  }) : super(name: 'WorkflowRepository');
+  });
 
   Future<WorkflowResponseModel> approveTask({
     @required Context context,
     @required String taskId,
   }) async {
-    final breadcrumbId = context.breadcrumbId;
-    log.fine('BreadcrumbId: $breadcrumbId. Approving task $taskId');
+    workflowDataSource.approveTask(taskId: taskId, headers: context.toHeader());
 
-    try {
-      workflowDataSource.approveTask(
-          taskId: taskId, headers: context.toHeader());
-
-      log.fine('BreadcrumbId: $breadcrumbId. Approving task succedded');
-      return WorkflowResponseModel(type: ResponseType.Success);
-    } catch (error, stack) {
-      log.shout(
-          'BreadcrumbId: $breadcrumbId. Approving task failed', error, stack);
-
-      throw RepositoryException(message: error);
-    }
+    return WorkflowResponseModel(type: ResponseType.Success);
   }
 
   Future<WorkflowResponseModel> rejectTask({
@@ -38,23 +26,12 @@ class WorkflowRepository extends Repository {
     @required String taskId,
     String reason,
   }) async {
-    final breadcrumbId = context.breadcrumbId;
-    log.fine('BreadcrumbId: $breadcrumbId. Rejecting task $taskId');
+    workflowDataSource.rejectTask(
+      taskId: taskId,
+      reason: reason,
+      headers: context.toHeader(),
+    );
 
-    try {
-      workflowDataSource.rejectTask(
-        taskId: taskId,
-        reason: reason,
-        headers: context.toHeader(),
-      );
-
-      log.fine('BreadcrumbId: $breadcrumbId. Rejecting task succedded');
-      return WorkflowResponseModel(type: ResponseType.Success);
-    } catch (error, stack) {
-      log.shout(
-          'BreadcrumbId: $breadcrumbId. Rejecting task failed', error, stack);
-
-      throw RepositoryException(message: error);
-    }
+    return WorkflowResponseModel(type: ResponseType.Success);
   }
 }

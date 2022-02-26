@@ -13,58 +13,41 @@ class TokenRepository extends Repository {
   TokenRepository({
     @required this.tokenRemoteDataSource,
     @required this.tokenLocalDataStore,
-  }) : super(name: 'TokenRepository');
+  });
 
   Future<TokenResponseModel> getToken({
     Context context,
     @required String username,
     @required String password,
   }) async {
-    final breadcrumbId = context.breadcrumbId;
-    log.fine("BreadcrumbId: $breadcrumbId. Requesting token.");
+    var responseMessage = await tokenRemoteDataSource.getToken(
+      username: username,
+      password: password,
+      headers: context.toHeader(),
+    );
 
-    try {
-      var responseMessage = await tokenRemoteDataSource.getToken(
-        username: username,
-        password: password,
-        headers: context.toHeader(),
-      );
-
-      log.fine('BreadcrumbId: $breadcrumbId. Requesting token is success');
-      return TokenResponseModel(
-        type: ResponseType.Success,
-        responseMessage: responseMessage,
-      );
-    } catch (error, stack) {
-      log.shout('BreadcrumbId: $breadcrumbId. Requesting token is failed.',
-          error, stack);
-
-      throw RepositoryException(message: error);
-    }
+    return TokenResponseModel(
+      type: ResponseType.Success,
+      responseMessage: responseMessage,
+    );
   }
 
   void saveToken({
     @required Context context,
     @required TokenLocalModel tokenModel,
   }) {
-    final breadcrumbId = context.breadcrumbId;
-    log.fine('BreadcrumbId: $breadcrumbId. Saving active token');
     tokenLocalDataStore.setToken(tokenModel);
   }
 
   Future<TokenLocalModel> getActiveToken({
     @required Context context,
   }) {
-    final breadcrumbId = context.breadcrumbId;
-    log.fine('BreadcrumbId: $breadcrumbId. Retrieving active token');
     return tokenLocalDataStore.getToken();
   }
 
   void removeToken({
     @required Context context,
   }) {
-    final breadcrumbId = context.breadcrumbId;
-    log.fine('BreadcrumbId: $breadcrumbId. Removing active token');
     tokenLocalDataStore.removeToken();
   }
 }

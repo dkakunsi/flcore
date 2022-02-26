@@ -40,8 +40,6 @@ class TokenLocalModel extends TokenEntity {
           refreshToken: refreshToken,
         );
 
-  bool get isExpired => DateTime.now().isAfter(expiredAt);
-
   Map<String, dynamic> toJson() {
     return {
       'accessToken': accessToken,

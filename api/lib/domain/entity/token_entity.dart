@@ -14,4 +14,6 @@ class TokenEntity {
     this.refreshToken,
     this.email,
   });
+
+  bool get isExpired => DateTime.now().isAfter(expiredAt);
 }

@@ -7,6 +7,10 @@ class ResourceEntity extends Entity {
 
   String get id => getValue('id');
 
+  set isRemoved(bool isRemoved) {
+    setValue('isRemoved', true);
+  }
+
   void set id(String id) => setValue('id', id);
 
   String get domain => getValue('domain');
