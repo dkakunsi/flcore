@@ -3,6 +3,7 @@ import 'package:api/data/repository/token_repository.dart';
 import 'package:api/domain/entity/token_entity.dart';
 import 'package:api/domain/context.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class TokenUseCase {
   final TokenRepository tokenRepository;
@@ -24,16 +25,29 @@ class TokenUseCase {
     final tokenResponse = await tokenRepository.getToken(
         username: username, password: password, context: context);
 
-    saveToLocal(context: context, token: tokenResponse);
+    final tokenModel = _toEntity(tokenResponse);
+    saveToLocal(context: context, tokenModel: tokenModel);
 
-    return tokenResponse.toEntity();
+    return tokenModel;
   }
 
   void saveToLocal({
     Context context,
-    @required TokenResponseModel token,
+    @required TokenLocalModel tokenModel,
   }) {
-    final tokenModel = TokenLocalModel.of(token);
     tokenRepository.saveToken(context: context, tokenModel: tokenModel);
+  }
+
+  TokenLocalModel _toEntity(TokenResponseModel tokenResponse) {
+    var payload = Jwt.parseJwt(tokenResponse.accessToken);
+
+    return TokenLocalModel(
+      accessToken: tokenResponse.accessToken,
+      refreshToken: tokenResponse.refreshToken,
+      expiredAt: DateTime.fromMillisecondsSinceEpoch(payload['exp']),
+      name: payload['name'],
+      email: payload['email'],
+      roles: payload['realm_access']['roles'],
+    );
   }
 }

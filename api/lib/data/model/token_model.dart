@@ -16,13 +16,9 @@ class TokenResponseModel extends ResponseModel {
     data = jsonDecode(responseMessage);
   }
 
-  TokenEntity toEntity() {
-    return TokenEntity(
-      accessToken: data['access_token'],
-      expiredAt: data['expired_at'],
-      name: data['name'],
-    );
-  }
+  String get accessToken => data['access_token'];
+
+  String get refreshToken => data['refresh_token'];
 }
 
 class TokenLocalModel extends TokenEntity {
@@ -32,12 +28,14 @@ class TokenLocalModel extends TokenEntity {
     @required String name,
     String email,
     String refreshToken,
+    String roles,
   }) : super(
           accessToken: accessToken,
           expiredAt: expiredAt,
           name: name,
           email: email,
           refreshToken: refreshToken,
+          roles: roles,
         );
 
   Map<String, dynamic> toJson() {
@@ -47,14 +45,7 @@ class TokenLocalModel extends TokenEntity {
       'name': name,
       'email': email,
       'refreshToken': refreshToken,
+      'roles': roles,
     };
-  }
-
-  static TokenLocalModel of(TokenResponseModel tokenResponse) {
-    return TokenLocalModel(
-      accessToken: tokenResponse.data['access_token'],
-      expiredAt: tokenResponse.data['expired_at'],
-      name: tokenResponse.data['name'],
-    );
   }
 }
