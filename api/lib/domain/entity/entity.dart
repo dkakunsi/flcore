@@ -12,4 +12,8 @@ abstract class Entity {
   dynamic getValue(String field) {
     return data[field];
   }
+
+  Map getObject(String field) {
+    return data[field];
+  }
 }

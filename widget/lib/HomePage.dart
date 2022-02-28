@@ -4,7 +4,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
-import 'package:widget/src/component/DataPage.dart';
 
 import 'src/Domain.dart';
 import 'Configuration.dart';

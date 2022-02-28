@@ -17,6 +17,8 @@ class Configuration {
 
   Map<String, dynamic> getConfig() => _config;
 
+  Map<String, dynamic> get common => _config;
+
   void setConfig(Map<String, dynamic> config) {
     _config = config;
   }

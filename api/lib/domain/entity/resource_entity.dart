@@ -24,4 +24,6 @@ class ResourceEntity extends Entity {
   String get name => getValue('name');
 
   void set name(String name) => setValue('name', name);
+
+  String get status => getValue('status');
 }
