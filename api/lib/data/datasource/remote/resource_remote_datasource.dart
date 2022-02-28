@@ -1,9 +1,7 @@
-library api;
-
-import 'package:flutter/material.dart';
-
-import 'remote_datasource.dart';
 import 'dart:convert';
+
+import 'package:api/data/datasource/remote/remote_datasource.dart';
+import 'package:flutter/material.dart';
 
 class ResourceRemoteDataSource extends BaseRemoteDataSource {
   ResourceRemoteDataSource({

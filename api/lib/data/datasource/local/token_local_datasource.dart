@@ -1,5 +1,4 @@
 import 'package:api/data/model/token_model.dart';
-import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 
 class TokenLocalDataSource {

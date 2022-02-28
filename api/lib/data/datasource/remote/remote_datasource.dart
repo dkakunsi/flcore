@@ -1,5 +1,3 @@
-library api;
-
 import 'package:http/http.dart' as http;
 
 abstract class BaseRemoteDataSource {

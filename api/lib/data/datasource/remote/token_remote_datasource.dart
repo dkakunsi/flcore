@@ -1,8 +1,5 @@
-library api;
-
+import 'package:api/data/datasource/remote/remote_datasource.dart';
 import 'package:flutter/material.dart';
-
-import 'remote_datasource.dart';
 
 class TokenRemoteDataSource extends BaseRemoteDataSource {
   TokenRemoteDataSource(Map<String, dynamic> configuration)

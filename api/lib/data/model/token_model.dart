@@ -1,20 +1,12 @@
-import 'dart:convert';
-
-import 'package:api/data/model/model.dart';
 import 'package:api/domain/entity/token_entity.dart';
 import 'package:flutter/material.dart';
 
-class TokenResponseModel extends ResponseModel {
+class TokenResponseModel {
   Map<String, dynamic> data;
+
   TokenResponseModel({
-    @required String responseMessage,
-    @required ResponseType type,
-  }) : super(
-          type: type,
-          responseMessage: responseMessage,
-        ) {
-    data = jsonDecode(responseMessage);
-  }
+    @required this.data,
+  });
 
   String get accessToken => data['access_token'];
 

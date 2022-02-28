@@ -1,12 +1,11 @@
+import 'dart:convert';
 import 'package:api/data/datasource/local/token_local_datasource.dart';
 import 'package:api/data/datasource/remote/token_remote_datasource.dart';
-import 'package:api/data/model/model.dart';
 import 'package:api/data/model/token_model.dart';
-import 'package:api/data/repository/repository.dart';
 import 'package:api/domain/context.dart';
 import 'package:flutter/material.dart';
 
-class TokenRepository extends Repository {
+class TokenRepository {
   final TokenRemoteDataSource tokenRemoteDataSource;
   final TokenLocalDataSource tokenLocalDataStore;
 
@@ -27,8 +26,7 @@ class TokenRepository extends Repository {
     );
 
     return TokenResponseModel(
-      type: ResponseType.Success,
-      responseMessage: responseMessage,
+      data: jsonDecode(responseMessage),
     );
   }
 

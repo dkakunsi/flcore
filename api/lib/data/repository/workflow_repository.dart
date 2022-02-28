@@ -1,27 +1,25 @@
 import 'package:api/data/datasource/remote/workflow_remote_datasource.dart';
-import 'package:api/data/model/model.dart';
-import 'package:api/data/model/workflow_model.dart';
-import 'package:api/data/repository/repository.dart';
 import 'package:api/domain/context.dart';
 import 'package:flutter/material.dart';
 
-class WorkflowRepository extends Repository {
+class WorkflowRepository {
   final WorkflowRemoteDataSource workflowDataSource;
 
   WorkflowRepository({
     @required this.workflowDataSource,
   });
 
-  Future<WorkflowResponseModel> approveTask({
+  Future<void> approveTask({
     @required Context context,
     @required String taskId,
   }) async {
-    workflowDataSource.approveTask(taskId: taskId, headers: context.toHeader());
-
-    return WorkflowResponseModel(type: ResponseType.Success);
+    workflowDataSource.approveTask(
+      taskId: taskId,
+      headers: context.toHeader(),
+    );
   }
 
-  Future<WorkflowResponseModel> rejectTask({
+  Future<void> rejectTask({
     @required Context context,
     @required String taskId,
     String reason,
@@ -31,7 +29,5 @@ class WorkflowRepository extends Repository {
       reason: reason,
       headers: context.toHeader(),
     );
-
-    return WorkflowResponseModel(type: ResponseType.Success);
   }
 }

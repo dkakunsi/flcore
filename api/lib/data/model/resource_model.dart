@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:api/domain/entity/resource_entity.dart';
 import 'package:flutter/material.dart';
 
-import 'model.dart';
-
 class ResourceRequestModel extends ResourceEntity {
   Map<String, dynamic> data;
 
@@ -17,19 +15,18 @@ class ResourceRequestModel extends ResourceEntity {
   }
 }
 
-class ResourceResponseModel extends ResponseModel {
+class ResourceResponseModel {
+  List list;
+  Map<String, dynamic> object;
+
   ResourceResponseModel({
-    @required ResponseType type,
     @required String responseMessage,
-  }) : super(
-          type: type,
-          responseMessage: responseMessage,
-        ) {
+  }) {
     if (_containsArraySymbols(responseMessage)) {
-      array = jsonDecode(responseMessage);
+      list = jsonDecode(responseMessage);
     } else {
       object = jsonDecode(responseMessage);
-      array = [object];
+      list = [object];
     }
   }
 
@@ -47,7 +44,7 @@ class ResourceResponseModel extends ResponseModel {
 
   List<ResourceEntity> toEntities() {
     var entities = <ResourceEntity>[];
-    array.forEach((obj) {
+    list.forEach((obj) {
       final entity = ResourceEntity(data: obj);
       entities.add(entity);
     });

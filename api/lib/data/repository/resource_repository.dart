@@ -1,11 +1,9 @@
 import 'package:api/data/datasource/remote/resource_remote_datasource.dart';
-import 'package:api/data/model/model.dart';
 import 'package:api/data/model/resource_model.dart';
-import 'package:api/data/repository/repository.dart';
 import 'package:api/domain/context.dart';
 import 'package:flutter/material.dart';
 
-class ResourceRepository extends Repository {
+class ResourceRepository {
   final ResourceRemoteDataSource resourceDataSource;
 
   ResourceRepository({
@@ -25,7 +23,6 @@ class ResourceRepository extends Repository {
     );
 
     return ResourceResponseModel(
-      type: ResponseType.Success,
       responseMessage: responseMessage,
     );
   }
@@ -45,7 +42,6 @@ class ResourceRepository extends Repository {
     );
 
     return ResourceResponseModel(
-      type: ResponseType.Success,
       responseMessage: responseMessage,
     );
   }
@@ -62,7 +58,6 @@ class ResourceRepository extends Repository {
     );
 
     return ResourceResponseModel(
-      type: ResponseType.Success,
       responseMessage: responseMessage,
     );
   }
@@ -79,7 +74,6 @@ class ResourceRepository extends Repository {
     );
 
     return ResourceResponseModel(
-      type: ResponseType.Success,
       responseMessage: responseMessage,
     );
   }
@@ -96,7 +90,6 @@ class ResourceRepository extends Repository {
     );
 
     return ResourceResponseModel(
-      type: ResponseType.Success,
       responseMessage: responseMessage,
     );
   }
