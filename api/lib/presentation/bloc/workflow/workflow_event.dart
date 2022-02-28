@@ -1,5 +1,13 @@
 abstract class WorkflowEvent {}
 
-class ApproveTaskWorkflowEvent extends WorkflowEvent {}
+class ApproveTaskWorkflowEvent extends WorkflowEvent {
+  final String taskId;
 
-class RejectTaskWorkflowEvent extends WorkflowEvent {}
+  ApproveTaskWorkflowEvent(this.taskId);
+}
+
+class RejectTaskWorkflowEvent extends WorkflowEvent {
+  final String taskId;
+
+  RejectTaskWorkflowEvent(this.taskId);
+}

@@ -9,7 +9,7 @@ class WorkflowUseCase {
     @required this.workflowRepository,
   });
 
-  Future<bool> approveTask({
+  Future<void> approveTask({
     @required Context context,
     @required String taskId,
   }) async {
@@ -17,11 +17,9 @@ class WorkflowUseCase {
       context: context,
       taskId: taskId,
     );
-
-    return true;
   }
 
-  Future<bool> rejectTask({
+  Future<void> rejectTask({
     @required Context context,
     @required String taskId,
     String reason,
@@ -31,7 +29,5 @@ class WorkflowUseCase {
       taskId: taskId,
       reason: reason,
     );
-
-    return true;
   }
 }
